@@ -42,7 +42,7 @@ import pl from 'payload-react';
 Payload('client_key_2zsp9Pske5l2Bgcy3bySES')
 
 var form = ReactDOM.render(
-	<pl.form.payment_method id="checkout-form" className="container">
+	<pl.form.payment id="checkout-form" className="container">
 		<pl.input.amount type="hidden" value="10.00"/>
 		<div className="row pt-2">
 			<div className="form-group col-7 px-1">
@@ -61,7 +61,7 @@ var form = ReactDOM.render(
 		<div className="row pt-2">
 			<button className="btn btn-primary" type="submit">Pay Now</button>
 		</div>
-	</pl.form.payment_method>, document.getElementById('root')
+	</pl.form.payment>, document.getElementById('root')
 );
 
 form.pl_form.params.styles = { invalid: "is-invalid" }
