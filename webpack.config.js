@@ -3,16 +3,24 @@ const path = require('path');
 module.exports = {
   entry: './src/payload-react.js',
   output: {
-    path: path.resolve('dist'),
+    path: path.resolve('umd'),
     filename: 'payload-react.js',
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'umd',
+    library: 'PayloadReact',
+    libraryExport: "default" ,
+    umdNamedDefine: true
   },
   module: {
     rules: [
-      { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ }
+      {
+        test: /\.(js|jsx)$/,
+        use: { loader: 'babel-loader' },
+        exclude: /node_modules/
+      }
     ]
   },
   externals: {
-    'react': 'commonjs react'
+    'react': 'React',
+    'react-dom': 'ReactDOM'
   }
 }

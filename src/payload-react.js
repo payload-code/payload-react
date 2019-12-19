@@ -24,11 +24,11 @@ class PayloadInput extends React.Component {
 class PayloadForm extends React.Component {
 
 	componentDidMount() {
-		var $this = $(ReactDOM.findDOMNode(this))
+		var node = ReactDOM.findDOMNode(this)
 		Payload(Payload.client_key)
 
 		this.pl_form = new Payload.Form({
-			form: $this.get(0),
+			form: node
 		})
 	}
 

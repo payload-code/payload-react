@@ -32,7 +32,7 @@ Payload('client_key_2zsp9Pske5l2Bgcy3bySES')
 ### Simple Checkout Form
 
 Below is an example of a react checkout form utilizing Payload.js Secure Inputs and styled
-with Bootstrap 4.
+with Bootstrap 4. *Note* Remember to include Payload.js with `<script src="https://payload.co/Payload.js"></script>`.
 
 ```javascript
 import React from 'react';
@@ -66,8 +66,8 @@ var form = ReactDOM.render(
 
 form.pl_form.params.styles = { invalid: "is-invalid" }
 
-form.pl_form.on('paid', function(data) {
-	console.log('paid', data)
+form.pl_form.on('processed', function(data) {
+	console.log('processed', data)
 })
 ```
 
