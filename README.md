@@ -22,8 +22,10 @@ import pl from 'payload-react';
 
 ### API Authentication
 
-To authenticate with the Payload, you'll need a live or test client key. Client API
+To authenticate with the Payload, you'll need a live or test client key for Payload.js. Client API
 keys are accessible from within the Payload dashboard.
+
+*Note* Remember to include Payload.js with `<script src="https://payload.co/Payload.js"></script>`.
 
 ```javascript
 Payload('client_key_2zsp9Pske5l2Bgcy3bySES')
@@ -32,7 +34,7 @@ Payload('client_key_2zsp9Pske5l2Bgcy3bySES')
 ### Simple Checkout Form
 
 Below is an example of a react checkout form utilizing Payload.js Secure Inputs and styled
-with Bootstrap 4. *Note* Remember to include Payload.js with `<script src="https://payload.co/Payload.js"></script>`.
+with Bootstrap 4.
 
 ```javascript
 import React from 'react';

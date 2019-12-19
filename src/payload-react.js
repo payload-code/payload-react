@@ -48,7 +48,7 @@ class PayloadForm extends React.Component {
 var PayloadReact = {
 	sensitive_fields: {
 		'account_number': true, 'routing_number': true,
-		'card_code': true, 'card_number': true, 'expiry': true},
+		'card_code': true, 'cvc': true, 'card_number': true, 'expiry': true},
 	input: new Proxy({},{get(target, name) {
 		if ( PayloadReact.sensitive_fields[name] )
 			return class extends PayloadInput {
