@@ -2,8 +2,9 @@ const path = require('path');
 
 module.exports = {
   entry: './src/payload-react.js',
+  mode: 'production',
   output: {
-    path: path.resolve('umd'),
+    path: path.resolve('dist'),
     filename: 'payload-react.js',
     libraryTarget: 'umd',
     library: 'PayloadReact',
@@ -20,7 +21,11 @@ module.exports = {
     ]
   },
   externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM'
+    react: {
+      root: 'React',
+      commonjs2: 'react',
+      commonjs: 'react',
+      amd: 'react',
+    }
   }
 }

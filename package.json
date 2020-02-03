@@ -1,12 +1,14 @@
 {
   "name": "payload-react",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A simple react wrapper around Payload.js. See https://docs.payload.co for more information.",
-  "main": "dist/payload-react.js",
+  "main": "./lib/payload-react.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack --watch",
-    "build": "webpack"
+    "build": "npm run build:commonjs && npm run build:umd",
+    "build:commonjs": "BABEL_ENV=commonjs babel src --out-dir lib",
+    "build:umd": "BABEL_ENV=commonjs webpack"
   },
   "keywords": [],
   "author": "Payload",
@@ -17,6 +19,7 @@
   },
   "homepage": "https://github.com/payload-code/payload-react#readme",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-preset-es2015": "^6.24.1",
