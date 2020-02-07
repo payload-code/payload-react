@@ -10,6 +10,14 @@ function getPropAttrs(props) {
 	return attrs
 }
 
+var __cls_cache = {}
+
+function cacheCls(name, cls) {
+	if ( !(name in __cls_cache) )
+		__cls_cache[name] = cls
+	return __cls_cache[name]
+}
+
 class PayloadInput extends React.Component {
 
 	render() {
@@ -51,22 +59,22 @@ var PayloadReact = {
 		'card_code': true, 'cvc': true, 'card_number': true, 'expiry': true},
 	input: new Proxy({},{get(target, name) {
 		if ( PayloadReact.sensitive_fields[name] )
-			return class extends PayloadInput {
+			return cacheCls('input.'+name, class extends PayloadInput {
 				render() {
 					this._pl_input = name
 					return super.render()
 				}
-			}
+			})
 		else
-			return class extends React.Component {
+			return cacheCls('input.'+name, class extends React.Component {
 				render() {
 					return ( <input pl-input={name} {...this.props} /> )
 				}
-			}
+			})
 	}}),
 
 	select: new Proxy({},{get(target, name) {
-		return class extends React.Component {
+		return cacheCls('select.'+name, class extends React.Component {
 			render() {
 				var attrs = getPropAttrs(this.props)
 				return (
@@ -75,17 +83,17 @@ var PayloadReact = {
 					</select>
 				)
 			}
-		}
+		})
 	}}),
 
 	form: new Proxy({},{get(target,name) {
-		return class extends PayloadForm {
+		return cacheCls( 'form.'+name, class extends PayloadForm {
 			render() {
 				this._pl_form = name
 				return super.render()
 			}
-		}
-	}}),
+		})
+	}})
 }
 
 export default PayloadReact
