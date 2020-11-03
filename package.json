@@ -1,6 +1,6 @@
 {
   "name": "payload-react",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A simple react wrapper around Payload.js. See https://docs.payload.co for more information.",
   "main": "./lib/payload-react.js",
   "scripts": {
@@ -26,11 +26,11 @@
     "babel-preset-react": "^6.24.1",
     "minimist": ">=1.2.2",
     "mkdirp": "^1.0.3",
-    "webpack": "^4.42.0",
+    "webpack": "^4.44.2",
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0"
   }
 }

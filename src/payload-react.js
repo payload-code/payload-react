@@ -32,8 +32,13 @@ class PayloadInput extends React.Component {
 class PayloadForm extends React.Component {
 
 	componentDidMount() {
-		var node = ReactDOM.findDOMNode(this)
 		Payload(Payload.client_key)
+	}
+
+	form(node) {
+		if (!node || node == this.form) return
+
+		this.form = node
 
 		this.pl_form = new Payload.Form({
 			form: node
@@ -46,7 +51,7 @@ class PayloadForm extends React.Component {
 			attrs['pl-form'] = this._pl_form
 
 		return (
-			<form {...attrs}>
+			<form {...attrs} ref={this.form.bind(this)}>
 			{this.props.children}
 			</form>
 		)
