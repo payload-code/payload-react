@@ -1,6 +1,6 @@
 {
   "name": "payload-react",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A simple react wrapper around Payload.js. See https://docs.payload.co for more information.",
   "main": "./lib/payload-react.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "start": "webpack --watch",
     "build": "npm run build:commonjs && npm run build:umd",
     "build:commonjs": "BABEL_ENV=commonjs babel src --out-dir lib",
-    "build:umd": "BABEL_ENV=commonjs webpack"
+    "build:umd": "BABEL_ENV=commonjs webpack",
+    "prepare": "npm run build"
   },
   "keywords": [],
   "author": "Payload",
