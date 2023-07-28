@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PayloadReact expect state to be updated with Payload when window.Payload exists 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "form": <form
+          client_token="test_fake_token_1234567"
+          pl-form="payment"
+        >
+          <button
+            type="submit"
+          >
+            Submit Payment
+          </button>
+        </form>,
+      },
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
