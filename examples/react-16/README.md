@@ -2,6 +2,14 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Setup environment
+
+Run the command below to create a new `.env.local` file and then edit the file to set `REACT_APP_PAYLOAD_CLIENT_TOKEN` with your test client token.
+
+```
+cp .env.local.example .env.local
+```
+
 ## Available Scripts
 
 In the project directory, you can run:

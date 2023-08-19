@@ -6,7 +6,6 @@ exports[`PayloadReact expect state to be updated with Payload when window.Payloa
     [
       {
         "form": <form
-          client_token="test_fake_token_1234567"
           pl-form="payment"
         >
           <button
@@ -21,7 +20,86 @@ exports[`PayloadReact expect state to be updated with Payload when window.Payloa
   "results": [
     {
       "type": "return",
-      "value": undefined,
+      "value": {
+        "on": [MockFunction] {
+          "calls": [
+            [
+              "processing",
+              [Function],
+            ],
+            [
+              "processed",
+              [Function],
+            ],
+            [
+              "error",
+              [Function],
+            ],
+            [
+              "declined",
+              [Function],
+            ],
+            [
+              "created",
+              [Function],
+            ],
+            [
+              "invalid",
+              [Function],
+            ],
+            [
+              "valid",
+              [Function],
+            ],
+            [
+              "focus",
+              [Function],
+            ],
+            [
+              "blur",
+              [Function],
+            ],
+          ],
+          "results": [
+            {
+              "type": "return",
+              "value": undefined,
+            },
+            {
+              "type": "return",
+              "value": undefined,
+            },
+            {
+              "type": "return",
+              "value": undefined,
+            },
+            {
+              "type": "return",
+              "value": undefined,
+            },
+            {
+              "type": "return",
+              "value": undefined,
+            },
+            {
+              "type": "return",
+              "value": undefined,
+            },
+            {
+              "type": "return",
+              "value": undefined,
+            },
+            {
+              "type": "return",
+              "value": undefined,
+            },
+            {
+              "type": "return",
+              "value": undefined,
+            },
+          ],
+        },
+      },
     },
   ],
 }

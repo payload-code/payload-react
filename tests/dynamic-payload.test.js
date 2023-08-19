@@ -1,11 +1,15 @@
 import { getPayload } from '../src/utils'
 
 describe('Payload.js', () => {
-  it.skip('should load', async () => {
+  it('should load', () => {
     global.document.body.innerHTML = '<div></div>'
 
     jest.spyOn(global.document.body, 'appendChild')
-    await getPayload()
+
+    getPayload()
     expect(document.body.appendChild).toHaveBeenCalled()
+
+    const script = document.querySelector('script')
+    expect(script.src).toBe('https://payload.co/Payload.js')
   })
 })
