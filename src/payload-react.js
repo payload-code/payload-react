@@ -3,10 +3,45 @@ import React from 'react'
 
 import { getPayload } from './utils'
 
-function getPropAttrs(props) {
+const PayloadFormContext = React.createContext(null)
+
+const sensitiveFields = {
+  account_number: true,
+  routing_number: true,
+  card_code: true,
+  cvc: true,
+  card_number: true,
+  expiry: true,
+  card: true,
+}
+
+const formParamsMap = {
+  autosubmit: 'autoSubmit',
+  style: 'styles',
+  payment: 'payment',
+  payment_method: 'paymentMethod',
+}
+
+const formEventsMap = {
+  processing: 'onProcessing',
+  processed: 'onProcessed',
+  error: 'onError',
+  declined: 'onDeclined',
+  created: 'onCreated',
+}
+
+const inputEventsMap = {
+  invalid: 'onInvalid',
+  valid: 'onValid',
+  focus: 'onFocus',
+  blur: 'onBlur',
+}
+
+function getPropAttrs(props, ignore) {
   const attrs = {}
   for (const key in props) {
     if (key == 'children') continue
+    if (ignore && ignore.includes(key)) continue
     attrs[key] = props[key]
   }
   return attrs
@@ -19,26 +54,62 @@ function cacheCls(name, cls) {
   return __cls_cache[name]
 }
 
-class PayloadInput extends React.Component {
+export class PayloadInput extends React.Component {
+  static contextType = PayloadFormContext
+
+  constructor(props) {
+    super(props)
+    this.props = props
+    this.inputRef = React.createRef()
+  }
+
+  componentDidMount() {
+    Object.entries(inputEventsMap).forEach(([key, value]) => {
+      if (value in this.props)
+        this.context.addListener(key, this.inputRef, this.props[value])
+    })
+  }
+
+  componentWillUnmount() {
+    Object.entries(inputEventsMap).forEach(([key, value]) => {
+      if (value in this.props) this.context.removeListener(key, this.inputRef)
+    })
+  }
+
   render() {
-    const attrs = getPropAttrs(this.props)
+    const attrs = getPropAttrs(this.props, Object.values(inputEventsMap))
+
     if (this._pl_input) attrs['pl-input'] = this._pl_input
 
-    return <div {...attrs}></div>
+    if ('attr' in attrs) {
+      attrs['pl-input'] = attrs['attr']
+      delete attrs['attr']
+    }
+
+    if (!('className' in attrs)) attrs['className'] = ''
+
+    attrs['className'] = (attrs['className'] + ' pl-input').trim()
+
+    if (sensitiveFields[attrs['pl-input']]) {
+      attrs['className'] += ' pl-input-sec'
+      return <div ref={this.inputRef} {...attrs}></div>
+    } else return <input ref={this.inputRef} {...attrs} />
   }
 }
 
-class PayloadForm extends React.Component {
+export class PayloadForm extends React.Component {
   constructor(props) {
     super(props)
     this.props = props
     this.state = {
       Payload: props.Payload ? props.Payload : null,
+      listeners: {},
     }
-    this.newForm = React.createRef()
+    this.formRef = React.createRef()
   }
+
   async componentDidMount() {
-    if (!this.props.client_token) {
+    if (!this.props.clientToken) {
       return
     }
 
@@ -47,70 +118,146 @@ class PayloadForm extends React.Component {
         await getPayload()
       }
       this.setState((state) => ({ ...state, Payload: window.Payload }))
-    }
+    } else this.initalizePayload()
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!prevState.Payload && this.state.Payload) {
-      // Payload it's set in our state we can initialize it
-      this.state.Payload(this.props.client_token)
-      this.pl_form = new this.state.Payload.Form({
-        form: this.newForm.current,
+      // Payload is set in our state we can initialize it
+      this.initalizePayload()
+    }
+  }
+
+  initalizePayload() {
+    this.state.Payload(this.props.clientToken)
+
+    const params = { form: this.formRef.current }
+
+    Object.entries(formParamsMap).forEach(([key, value]) => {
+      if (value in this.props) params[key] = this.props[value]
+    })
+
+    this.pl_form = new this.state.Payload.Form({
+      form: this.formRef.current,
+      ...params,
+    })
+
+    new Array(
+      ...Object.entries(formEventsMap),
+      ...Object.entries(inputEventsMap)
+    ).forEach(([key, value]) => {
+      this.pl_form.on(key, (evt, ...args) => {
+        if (value in this.props) this.props[value](evt, ...args)
+
+        if (key in this.state.listeners)
+          this.state.listeners[key].forEach(([ref, listener]) => {
+            if (evt.target === ref?.current) listener(evt, ...args)
+          })
       })
+    })
+  }
+
+  addListener(evt, ref, cb) {
+    const listeners = this.state.listeners
+    if (!(evt in listeners)) listeners[evt] = []
+    listeners[evt].push([ref, cb])
+    this.setState({ listeners })
+  }
+
+  removeListener(evt, ref) {
+    const listeners = this.state.listeners
+    const index = listeners[evt]?.findIndex(([r, cb]) => r === ref) ?? -1
+
+    if (index != -1) {
+      listeners[evt].splice(index, 1)
+      this.setState({ listeners })
     }
   }
 
   render() {
-    const attrs = getPropAttrs(this.props)
+    const attrs = getPropAttrs(this.props, [
+      ...Object.values(formParamsMap),
+      ...Object.values(formEventsMap),
+      ...Object.values(inputEventsMap),
+      'clientToken',
+      'Payload',
+    ])
 
     if (this._pl_form) attrs['pl-form'] = this._pl_form
 
     return (
-      <form {...attrs} ref={this.newForm}>
-        {this.props.children}
-      </form>
+      <PayloadFormContext.Provider
+        value={{
+          addListener: (...args) => this.addListener(...args),
+          removeListener: (...args) => this.removeListener(...args),
+        }}>
+        <form {...attrs} ref={this.formRef}>
+          {this.props.children}
+        </form>
+      </PayloadFormContext.Provider>
     )
   }
 }
 
+export const PaymentForm = ({ children, ...props }) => {
+  return (
+    <PayloadForm pl-form="payment" {...props}>
+      {children}
+    </PayloadForm>
+  )
+}
+
+export const PaymentMethodForm = ({ children, ...props }) => {
+  return (
+    <PayloadForm pl-form="payment_method" {...props}>
+      {children}
+    </PayloadForm>
+  )
+}
+
+export const Card = (props) => {
+  return <PayloadInput pl-input="card" {...props} />
+}
+
+export const CardNumber = (props) => {
+  return <PayloadInput pl-input="card_number" {...props} />
+}
+
+export const Expiry = (props) => {
+  return <PayloadInput pl-input="expiry" {...props} />
+}
+
+export const CardCode = (props) => {
+  return <PayloadInput pl-input="card_code" {...props} />
+}
+
+export const RoutingNumber = (props) => {
+  return <PayloadInput pl-input="routing_number" {...props} />
+}
+
+export const AccountNumber = (props) => {
+  return <PayloadInput pl-input="account_number" {...props} />
+}
+
 PayloadForm.propTypes = {
-  client_token: PropTypes.string.isRequired,
+  clientToken: PropTypes.string.isRequired,
   Payload: PropTypes.func,
 }
 
 const PayloadReact = {
-  sensitive_fields: {
-    account_number: true,
-    routing_number: true,
-    card_code: true,
-    cvc: true,
-    card_number: true,
-    expiry: true,
-    card: true,
-  },
   input: new Proxy(
     {},
     {
       get(target, name) {
-        if (PayloadReact.sensitive_fields[name])
-          return cacheCls(
-            'input.' + name,
-            class extends PayloadInput {
-              render() {
-                this._pl_input = name
-                return super.render()
-              }
+        return cacheCls(
+          'input.' + name,
+          class extends PayloadInput {
+            render() {
+              this._pl_input = name
+              return super.render()
             }
-          )
-        else
-          return cacheCls(
-            'input.' + name,
-            class extends React.Component {
-              render() {
-                return <input pl-input={name} {...this.props} />
-              }
-            }
-          )
+          }
+        )
       },
     }
   ),

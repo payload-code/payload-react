@@ -1,4 +1,4 @@
-export async function getPayload() {
+export function getPayload() {
   return new Promise((resolve, reject) => {
     const s = document.createElement('script')
 
