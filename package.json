@@ -2,13 +2,13 @@
   "name": "payload-react",
   "version": "1.0.0",
   "description": "A simple react wrapper around Payload.js. See https://docs.payload.co for more information.",
-  "main": "./lib/payload-react.js",
+  "main": "dist/payload-react.js",
+  "module": "dist/payload-react.js",
   "scripts": {
     "test": "jest",
     "start": "webpack --watch",
-    "build": "npm run build:commonjs && npm run build:umd",
-    "build:commonjs": "BABEL_ENV=commonjs babel src --out-dir lib",
-    "build:umd": "BABEL_ENV=commonjs webpack",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && NODE_ENV=production babel src/ --out-dir dist --copy-files",
     "prepare": "husky install",
     "eslint": "eslint src --ext .js --fix",
     "prettier": "prettier --write 'src/**/*.js'"
@@ -69,5 +69,8 @@
     "*.{js}": [
       "prettier --write"
     ]
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }

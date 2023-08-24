@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { getPayload } from './utils'
+import { getPayload } from './utils.js'
 
 const PayloadFormContext = React.createContext(null)
 
