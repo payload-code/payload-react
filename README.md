@@ -32,10 +32,6 @@ import {
 
 To authenticate with the Payload, you'll need a live or test client token for Payload.js. Client tokens can be generated using the secret key accessible from within the Payload dashboard. For more information on generating a client token, see [Authentication](https://docs.payload.co/ui/authentication/).
 
-```javascript
-Payload('client_key_2zsp9Pske5l2Bgcy3bySES')
-```
-
 ### Simple Checkout Form
 
 Below is an example of a react checkout form utilizing Payload.js Secure Inputs and styled
@@ -56,8 +52,8 @@ function CheckoutForm() {
       clientToken='client_key_2zsp9Pske5l2Bgcy3bySES'
       className="container"
       styles={{invalid: 'is-invalid'}}
-      onProcessed={(data)=>{
-        console.log('processed')
+      onProcessed={(evt)=>{
+        console.log('processed', evt.transaction_id)
       }}
       onError={(evt)=>{
         alert(evt.message)
