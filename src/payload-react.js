@@ -66,7 +66,9 @@ export class PayloadInput extends React.Component {
   componentDidMount() {
     Object.entries(inputEventsMap).forEach(([key, value]) => {
       if (value in this.props)
-        this.context.addListener(key, this.inputRef, this.props[value])
+        this.context.addListener(key, this.inputRef, (...args) =>
+          this.props[value](...args)
+        )
     })
   }
 
