@@ -379,6 +379,63 @@ describe('PayloadReact', () => {
     expect(onInvalid).not.toHaveBeenCalled()
   })
 
+  it('expect input event props to PayloadInput to update when rerendered', async () => {
+    const Payload = mockPayload()
+
+    const getPayloadMock = jest
+      .spyOn(utils, 'getPayload')
+      .mockImplementation(() => {
+        global.Payload = Payload
+        return Promise.resolve()
+      })
+
+    let invalidCountValue = 0
+
+    const Test = () => {
+      const [invalidCount, setInvalidCount] = useState(0)
+
+      invalidCountValue = invalidCount
+
+      return (
+        <PaymentForm clientToken="test_fake_token_1234567">
+          <CardNumber
+            id="card-number"
+            onInvalid={(evt) => {
+              setInvalidCount(invalidCount + 1)
+            }}
+          />
+          <button type="submit">Submit Payment</button>
+        </PaymentForm>
+      )
+    }
+
+    const form = mount(<Test />)
+
+    await waitFor(() => {
+      expect(Payload).toHaveBeenCalledWith('test_fake_token_1234567')
+      expect(form.find('#card-number').exists()).toBe(true)
+    })
+
+    const cardNumberWrapper = form.find('#card-number').at(1)
+    const cardNumber = cardNumberWrapper.instance().inputRef.current
+
+    const [evt, cb] = Payload.Form.mock.results[0].value.on.mock.calls.find(
+      ([evt, cb]) => evt === 'invalid'
+    )
+
+    expect(invalidCountValue).toBe(0)
+
+    const eventObject = { target: cardNumber }
+
+    act(() => cb(eventObject))
+
+    expect(invalidCountValue).toBe(1)
+
+    act(() => cb(eventObject))
+
+    expect(invalidCountValue).toBe(2)
+  })
+
   it.each([
     ['card_number', true],
     ['amount', false],

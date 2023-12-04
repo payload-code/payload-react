@@ -1,6 +1,6 @@
 {
   "name": "payload-react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple react wrapper around Payload.js. See https://docs.payload.co for more information.",
   "main": "dist/payload-react.js",
   "module": "dist/payload-react.js",
