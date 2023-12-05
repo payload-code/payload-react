@@ -163,7 +163,7 @@ describe('PayloadReact', () => {
     )
     expect(form.state('Payload').Form).toHaveBeenCalledWith({
       autosubmit: false,
-      style: { invalid: 'is-invalid' },
+      styles: { invalid: 'is-invalid' },
       payment: { status: 'authorized' },
       form: expect.anything(),
     })
@@ -198,7 +198,7 @@ describe('PayloadReact', () => {
     )
     expect(form.state('Payload').Form).toHaveBeenCalledWith({
       autosubmit: false,
-      style: { invalid: 'is-invalid' },
+      styles: { invalid: 'is-invalid' },
       payment_method: { customet_id: '12345' },
       form: expect.anything(),
     })
@@ -217,6 +217,7 @@ describe('PayloadReact', () => {
     const events = {
       onProcessing: jest.fn(),
       onProcessed: jest.fn(),
+      onAuthorized: jest.fn(),
       onError: jest.fn(),
       onDeclined: jest.fn(),
       onCreated: jest.fn(),
