@@ -17,7 +17,7 @@ const sensitiveFields = {
 
 const formParamsMap = {
   autosubmit: 'autoSubmit',
-  style: 'styles',
+  styles: 'styles',
   payment: 'payment',
   payment_method: 'paymentMethod',
 }
@@ -25,6 +25,7 @@ const formParamsMap = {
 const formEventsMap = {
   processing: 'onProcessing',
   processed: 'onProcessed',
+  authorized: 'onAuthorized',
   error: 'onError',
   declined: 'onDeclined',
   created: 'onCreated',

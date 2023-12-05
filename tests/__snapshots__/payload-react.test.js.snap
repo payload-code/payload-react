@@ -32,6 +32,10 @@ exports[`PayloadReact expect state to be updated with Payload when window.Payloa
               [Function],
             ],
             [
+              "authorized",
+              [Function],
+            ],
+            [
               "error",
               [Function],
             ],
@@ -61,6 +65,10 @@ exports[`PayloadReact expect state to be updated with Payload when window.Payloa
             ],
           ],
           "results": [
+            {
+              "type": "return",
+              "value": undefined,
+            },
             {
               "type": "return",
               "value": undefined,
