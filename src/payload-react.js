@@ -20,6 +20,7 @@ const formParamsMap = {
   style: 'styles',
   payment: 'payment',
   payment_method: 'paymentMethod',
+  disablePaste: 'disable-paste',
 }
 
 const formEventsMap = {
