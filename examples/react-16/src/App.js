@@ -5,6 +5,8 @@ import {
   Expiry,
   PayloadInput,
   PaymentForm,
+  ProcessingForm,
+  openProcessingForm,
 } from 'payload-react'
 import React, { useState } from 'react'
 
@@ -111,11 +113,35 @@ function Example2() {
   )
 }
 
+function Example3() {
+  return (
+    <ProcessingForm clientToken={process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN} />
+  )
+}
+
+function Example4() {
+  return (
+    <div style={{ marginTop: '25px' }}>
+      <button
+        className="btn btn-primary"
+        onClick={(e) =>
+          openProcessingForm({
+            clientToken: process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN,
+          })
+        }>
+        Open Processing Form Modal
+      </button>
+    </div>
+  )
+}
+
 function App() {
   return (
     <div className="App">
       <Example1 />
       <Example2 />
+      <Example3 />
+      <Example4 />
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import { getPayload } from './utils.js'
 
@@ -240,6 +240,79 @@ export const RoutingNumber = (props) => {
 
 export const AccountNumber = (props) => {
   return <PayloadInput pl-input="account_number" {...props} />
+}
+
+export class ProcessingForm extends React.Component {
+  constructor(props) {
+    super(props)
+    this.props = props
+    this.state = {
+      Payload: props.Payload ? props.Payload : null,
+      listeners: {},
+    }
+    this.procFormRef = React.createRef()
+    this.processingAccount = null
+    this.events = props.events?.length > 0 ? [...props.events] : []
+
+    if (this.props.events) {
+      delete this.props.events
+    }
+  }
+
+  async componentDidMount() {
+    if (!this.props.clientToken) {
+      return
+    }
+
+    if (!this.state.Payload) {
+      if (!window.Payload) {
+        await getPayload()
+      }
+      this.setState((state) => ({ ...state, Payload: window.Payload }))
+    } else {
+      this.initalizePayload()
+    }
+  }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (!prevState.Payload && this.state.Payload) {
+      // Payload is set in our state we can initialize it
+      this.initalizePayload()
+      this.processingAccount = new this.state.Payload.ProcessingAccount({
+        container: this.procFormRef.current,
+        client_key: this.props.clientToken,
+        ...this.props,
+      })
+
+      for (const event of this.events) {
+        this.processingAccount.on(event.name, event.fn)
+      }
+    }
+  }
+
+  initalizePayload() {
+    this.state.Payload(this.props.clientToken)
+  }
+
+  render() {
+    return <div ref={this.procFormRef}></div>
+  }
+}
+
+export const openProcessingForm = async (props) => {
+  await getPayload()
+  const events = props.events?.length > 0 ? [...props.events] : []
+  if (props.events) {
+    delete props.events
+  }
+
+  const processingAccount = new window.Payload.ProcessingAccount({
+    client_key: props.clientToken,
+    ...props,
+  })
+
+  for (const event of events) {
+    processingAccount.on(event.name, event.fn)
+  }
 }
 
 PayloadForm.propTypes = {
