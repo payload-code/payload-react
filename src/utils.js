@@ -1,11 +1,21 @@
+let loadingPromise = null
+
 export function getPayload() {
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script')
+  if (!loadingPromise)
+    loadingPromise = new Promise((resolve, reject) => {
+      if (window.Payload) {
+        resolve(window.Payload)
+        return
+      }
 
-    s.setAttribute('src', 'https://payload.co/Payload.js')
-    s.addEventListener('load', resolve)
-    s.addEventListener('error', reject)
+      const s = document.createElement('script')
 
-    document.body.appendChild(s)
-  })
+      s.setAttribute('src', 'https://payload.co/Payload.js')
+      s.addEventListener('load', () => resolve(window.Payload))
+      s.addEventListener('error', reject)
+
+      document.body.appendChild(s)
+    })
+
+  return loadingPromise
 }

@@ -38,6 +38,18 @@ const inputEventsMap = {
   blur: 'onBlur',
 }
 
+const processingFormEventsMap = {
+  success: 'onSuccess',
+  account_created: 'onAccountCreated',
+  loaded: 'onLoaded',
+  closed: 'onClosed',
+}
+
+const processingFormAttributeMap = {
+  form: 'form',
+  legal_entity_id: 'legalEntityId',
+}
+
 function getPropAttrs(props, ignore) {
   const attrs = {}
   for (const key in props) {
@@ -242,21 +254,18 @@ export const AccountNumber = (props) => {
   return <PayloadInput pl-input="account_number" {...props} />
 }
 
-export class ProcessingForm extends React.Component {
+export class ProcessingAccountForm extends React.Component {
   constructor(props) {
     super(props)
     this.props = props
     this.state = {
       Payload: props.Payload ? props.Payload : null,
-      listeners: {},
     }
     this.procFormRef = React.createRef()
     this.processingAccount = null
-    this.events = props.events?.length > 0 ? [...props.events] : []
-
-    if (this.props.events) {
-      delete this.props.events
-    }
+    this.excludeProps = Object.values(processingFormAttributeMap)
+      .concat(Object.values(processingFormEventsMap))
+      .concat(['Payload', 'clientToken'])
   }
 
   async componentDidMount() {
@@ -273,19 +282,27 @@ export class ProcessingForm extends React.Component {
       this.initalizePayload()
     }
   }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!prevState.Payload && this.state.Payload) {
       // Payload is set in our state we can initialize it
       this.initalizePayload()
-      this.processingAccount = new this.state.Payload.ProcessingAccount({
-        container: this.procFormRef.current,
-        client_key: this.props.clientToken,
-        ...this.props,
+
+      const props = {}
+      Object.entries(processingFormAttributeMap).forEach(([key, value]) => {
+        if (value in this.props) props[key] = this.props[value]
       })
 
-      for (const event of this.events) {
-        this.processingAccount.on(event.name, event.fn)
-      }
+      this.processingAccount = new this.state.Payload.ProcessingAccount({
+        container: this.procFormRef.current,
+        ...props,
+      })
+
+      Object.entries(processingFormEventsMap).forEach(([key, value]) => {
+        this.processingAccount.on(key, (evt, ...args) => {
+          if (value in this.props) this.props[value](evt, ...args)
+        })
+      })
     }
   }
 
@@ -294,25 +311,34 @@ export class ProcessingForm extends React.Component {
   }
 
   render() {
-    return <div ref={this.procFormRef}></div>
+    const props = {}
+    Object.entries(this.props).forEach(([key, value]) => {
+      if (!this.excludeProps.includes(key)) props[key] = value
+    })
+
+    return <div ref={this.procFormRef} {...props}></div>
   }
 }
 
-export const openProcessingForm = async (props) => {
+export const openProcessingAccountForm = async (props) => {
   await getPayload()
-  const events = props.events?.length > 0 ? [...props.events] : []
-  if (props.events) {
-    delete props.events
-  }
 
-  const processingAccount = new window.Payload.ProcessingAccount({
-    client_key: props.clientToken,
-    ...props,
+  window.Payload(props.clientToken)
+
+  const transformedProps = {}
+  Object.entries(processingFormAttributeMap).forEach(([key, value]) => {
+    if (value in props) transformedProps[key] = props[value]
   })
 
-  for (const event of events) {
-    processingAccount.on(event.name, event.fn)
-  }
+  const processingAccount = new window.Payload.ProcessingAccount({
+    ...transformedProps,
+  })
+
+  Object.entries(processingFormEventsMap).forEach(([key, value]) => {
+    if (value in props) processingAccount.on(key, props[value])
+  })
+
+  return processingAccount
 }
 
 PayloadForm.propTypes = {

@@ -10,6 +10,8 @@ import PayloadReact, {
   Expiry,
   PayloadInput,
   PaymentForm,
+  ProcessingAccountForm,
+  openProcessingAccountForm,
 } from '../src/payload-react'
 import * as utils from '../src/utils'
 
@@ -17,9 +19,20 @@ afterEach(() => {
   delete global.Payload
 })
 
+const toCamel = (s) => {
+  return s.replace(/([-_][a-z])/gi, ($1) => {
+    return $1.toUpperCase().replace('-', '').replace('_', '')
+  })
+}
+const getReactEvtName = (evt) =>
+  'on' + evt.charAt(0).toUpperCase() + toCamel(evt.slice(1))
+
 function mockPayload() {
   const Payload = jest.fn()
   Payload.Form = jest.fn().mockImplementation(() => {
+    return { on: jest.fn() }
+  })
+  Payload.ProcessingAccount = jest.fn().mockImplementation(() => {
     return { on: jest.fn() }
   })
   return Payload
@@ -294,7 +307,7 @@ describe('PayloadReact', () => {
     const expiry = form.find('#expiry').at(1).instance().inputRef.current
 
     Payload.Form.mock.results[0].value.on.mock.calls.forEach(([evt, cb]) => {
-      const evtName = 'on' + evt.charAt(0).toUpperCase() + evt.slice(1)
+      const evtName = getReactEvtName(evt)
 
       new Array(
         [cardNumber, cardNumberEvents, expiryEvents],
@@ -465,4 +478,234 @@ describe('PayloadReact', () => {
 `)
     }
   )
+
+  it('expect ProcessingAccountForm event props to fire', async () => {
+    const Payload = mockPayload()
+
+    const getPayloadMock = jest
+      .spyOn(utils, 'getPayload')
+      .mockImplementation(() => {
+        global.Payload = Payload
+        return Promise.resolve()
+      })
+
+    const processingFormEvents = {
+      onSuccess: jest.fn(),
+      onAccountCreated: jest.fn(),
+      onLoaded: jest.fn(),
+      onClosed: jest.fn(),
+    }
+
+    const form = mount(
+      <ProcessingAccountForm
+        id="processing-form"
+        clientToken="test_fake_token_1234567"
+        {...processingFormEvents}
+      />
+    )
+
+    await waitFor(() => {
+      expect(Payload).toHaveBeenCalledWith('test_fake_token_1234567')
+      expect(form.instance().procFormRef.current).not.toBeUndefined()
+    })
+
+    const processingForm = form.instance().procFormRef.current
+
+    expect(
+      Payload.ProcessingAccount.mock.results[0].value.on.mock.calls.length
+    ).toBe(Object.keys(processingFormEvents).length)
+    Payload.ProcessingAccount.mock.results[0].value.on.mock.calls.forEach(
+      ([evt, cb]) => {
+        const evtName = getReactEvtName(evt)
+
+        if (!(evtName in processingFormEvents)) return
+
+        expect(processingFormEvents[evtName]).not.toHaveBeenCalled()
+
+        const eventObject = { target: processingForm }
+
+        cb(eventObject)
+
+        expect(processingFormEvents[evtName]).toHaveBeenCalledWith(eventObject)
+
+        processingFormEvents[evtName].mockClear()
+      }
+    )
+  })
+
+  it('expect ProcessingAccountForm event props to update when rerendered', async () => {
+    const Payload = mockPayload()
+
+    const getPayloadMock = jest
+      .spyOn(utils, 'getPayload')
+      .mockImplementation(() => {
+        global.Payload = Payload
+        return Promise.resolve()
+      })
+
+    let successCountValue = 0
+
+    const Test = () => {
+      const [successCount, setSuccessCount] = useState(0)
+
+      successCountValue = successCount
+
+      return (
+        <ProcessingAccountForm
+          id="processing-form"
+          clientToken="test_fake_token_1234567"
+          onSuccess={(evt) => {
+            setSuccessCount(successCount + 1)
+          }}
+        />
+      )
+    }
+
+    const form = mount(<Test />)
+
+    await waitFor(() => {
+      expect(Payload).toHaveBeenCalledWith('test_fake_token_1234567')
+    })
+
+    const [evt, cb] =
+      Payload.ProcessingAccount.mock.results[0].value.on.mock.calls.find(
+        ([evt, cb]) => evt === 'success'
+      )
+
+    expect(successCountValue).toBe(0)
+
+    const eventObject = { target: {} }
+
+    act(() => cb(eventObject))
+
+    expect(successCountValue).toBe(1)
+
+    act(() => cb(eventObject))
+
+    expect(successCountValue).toBe(2)
+  })
+
+  it('expect ProcessingAccountForm init props to pass to Payload.ProcessingAccount', async () => {
+    const Payload = mockPayload()
+
+    const getPayloadMock = jest
+      .spyOn(utils, 'getPayload')
+      .mockImplementation(() => {
+        global.Payload = Payload
+        return Promise.resolve()
+      })
+
+    const processingFormEvents = {
+      onSuccess: jest.fn(),
+      onAccountCreated: jest.fn(),
+      onLoaded: jest.fn(),
+      onClosed: jest.fn(),
+    }
+
+    const form = mount(
+      <ProcessingAccountForm
+        id="processing-form"
+        className="example"
+        clientToken="test_fake_token_1234567"
+        legalEntityId="le_example"
+      />
+    )
+
+    await waitFor(() => {
+      expect(Payload).toHaveBeenCalledWith('test_fake_token_1234567')
+      expect(form.instance().procFormRef.current).not.toBeUndefined()
+    })
+
+    const processingForm = form.instance().procFormRef.current
+    expect(Payload.ProcessingAccount.mock.calls[0]).toEqual([
+      {
+        container: expect.any(HTMLElement),
+        legal_entity_id: 'le_example',
+      },
+    ])
+    expect(Payload.ProcessingAccount.mock.calls[0][0].container).toBe(
+      processingForm
+    )
+  })
+
+  it('expect ProcessingAccountForm to render html props on div', async () => {
+    const { container } = render(
+      <ProcessingAccountForm
+        clientToken="test_fake_token_1234567"
+        className="example"
+        legalEntityId="le_example"
+      />
+    )
+
+    expect(container).toMatchInlineSnapshot(`
+<div>
+  <div
+    class="example"
+  />
+</div>
+`)
+  })
+
+  it('expect openProcessingAccountForm init props to pass to Payload.ProcessingAccount', async () => {
+    const Payload = mockPayload()
+
+    const getPayloadMock = jest
+      .spyOn(utils, 'getPayload')
+      .mockImplementation(() => {
+        global.Payload = Payload
+        return Promise.resolve()
+      })
+
+    const processingFormEvents = {
+      onSuccess: jest.fn(),
+      onAccountCreated: jest.fn(),
+      onLoaded: jest.fn(),
+      onClosed: jest.fn(),
+    }
+
+    const processingForm = await openProcessingAccountForm({
+      clientToken: 'test_fake_token_1234567',
+      legalEntityId: 'le_example',
+      ...processingFormEvents,
+    })
+
+    await waitFor(() => {
+      expect(Payload).toHaveBeenCalledWith('test_fake_token_1234567')
+    })
+
+    expect(Payload.ProcessingAccount.mock.calls[0]).toEqual([
+      {
+        legal_entity_id: 'le_example',
+      },
+    ])
+
+    expect(
+      Payload.ProcessingAccount.mock.results[0].value.on.mock.calls.length
+    ).toBe(Object.keys(processingFormEvents).length)
+    Payload.ProcessingAccount.mock.results[0].value.on.mock.calls.forEach(
+      ([evt, cb]) => {
+        const evtName = getReactEvtName(evt)
+
+        expect(cb).toBe(processingFormEvents[evtName])
+      }
+    )
+  })
+
+  it('expect ProcessingAccountForm to render html props on div', async () => {
+    const { container } = render(
+      <ProcessingAccountForm
+        clientToken="test_fake_token_1234567"
+        className="example"
+        legalEntityId="le_example"
+      />
+    )
+
+    expect(container).toMatchInlineSnapshot(`
+<div>
+  <div
+    class="example"
+  />
+</div>
+`)
+  })
 })

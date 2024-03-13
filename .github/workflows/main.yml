@@ -7,7 +7,7 @@ on:
     branches: ["master"]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,8 +17,8 @@ jobs:
       - name: install
         run: npm i
       - name: ESLint
-        run: npm run eslint
+        run: npx eslint src --ext .js
       - name: Prettier
-        run: npm run prettier
+        run: npx prettier -c 'src/**/*.js'
       - name: Tests
         run: npm t
