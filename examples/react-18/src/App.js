@@ -5,8 +5,8 @@ import {
   Expiry,
   PayloadInput,
   PaymentForm,
-  ProcessingForm,
-  openProcessingForm,
+  ProcessingAccountForm,
+  openProcessingAccountForm,
 } from 'payload-react'
 import React, { useState } from 'react'
 
@@ -14,7 +14,8 @@ import './App.css'
 
 function Example1() {
   return (
-    <div>
+    <div className="mt-5">
+      <h3>Card Payment Example - deprecated</h3>
       {/* eslint-disable-next-line */}
       <PayloadReact.form.payment
         clientToken={process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN}
@@ -44,7 +45,8 @@ function Example2() {
   const [invalidCardCode, setInvalidCardCode] = useState(false)
 
   return (
-    <div>
+    <div className="mt-5">
+      <h3>Card Payment Example - New Component Design</h3>
       <PaymentForm
         clientToken={process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN}
         className="container"
@@ -115,21 +117,33 @@ function Example2() {
 
 function Example3() {
   return (
-    <ProcessingForm clientToken={process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN} />
+    <div className="mt-5">
+      <h3>Embedded Processing Form Example</h3>
+      <ProcessingAccountForm
+        clientToken={process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN}
+        onLoaded={() => {
+          console.log('loaded')
+        }}
+        onCreated={() => {
+          console.log('created')
+        }}
+      />
+    </div>
   )
 }
 
 function Example4() {
   return (
-    <div style={{ marginTop: '25px' }}>
+    <div className="mt-5">
+      <h3>Processing Form Modal Example</h3>
       <button
         className="btn btn-primary"
         onClick={(e) =>
-          openProcessingForm({
+          openProcessingAccountForm({
             clientToken: process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN,
           })
         }>
-        Open Processing Form Modal
+        Open Processing Account Form Modal
       </button>
     </div>
   )
@@ -139,8 +153,11 @@ function App() {
   return (
     <div className="App">
       <Example1 />
+      <hr />
       <Example2 />
+      <hr />
       <Example3 />
+      <hr />
       <Example4 />
     </div>
   )

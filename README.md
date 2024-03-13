@@ -24,7 +24,9 @@ import {
     Expiry,
     CardCode,
     RoutingNumber,
-    AccountNumber
+    AccountNumber,
+    ProcessingAccountForm,
+    openProcessingAccountForm
 } from 'payload-react';
 ```
 
@@ -82,6 +84,31 @@ function CheckoutForm() {
             <button className="btn btn-primary" type="submit">Pay Now</button>
         </div>
     </PaymentForm>
+}
+```
+
+### Processing Account Form
+
+Below is an example of how to open the Payload.js ProcessingAccountForm modal from react.
+
+```javascript
+import {
+    openProcessingAccountForm
+} from 'payload-react';
+
+function OnboardButton() {
+    return <button
+        className="btn btn-primary"
+        onClick={(e) =>
+          openProcessingAccountForm({
+            clientToken: 'client_key_2zsp9Pske5l2Bgcy3bySES',
+            onSuccess(evt) {
+                console.log(evt.account.id)
+            }
+          })
+        }>
+        Open Processing Account Form Modal
+    </button>
 }
 ```
 
