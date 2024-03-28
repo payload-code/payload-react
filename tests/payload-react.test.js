@@ -494,6 +494,7 @@ describe('PayloadReact', () => {
       onAccountCreated: jest.fn(),
       onLoaded: jest.fn(),
       onClosed: jest.fn(),
+      onChange: jest.fn(),
     }
 
     const form = mount(
@@ -600,6 +601,7 @@ describe('PayloadReact', () => {
       onAccountCreated: jest.fn(),
       onLoaded: jest.fn(),
       onClosed: jest.fn(),
+      onChange: jest.fn(),
     }
 
     const form = mount(

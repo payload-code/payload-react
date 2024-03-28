@@ -29,6 +29,7 @@ const formEventsMap = {
   error: 'onError',
   declined: 'onDeclined',
   created: 'onCreated',
+  success: 'onSuccess',
 }
 
 const inputEventsMap = {
@@ -36,6 +37,7 @@ const inputEventsMap = {
   valid: 'onValid',
   focus: 'onFocus',
   blur: 'onBlur',
+  success: 'onSuccess',
 }
 
 const processingFormEventsMap = {
@@ -43,6 +45,7 @@ const processingFormEventsMap = {
   account_created: 'onAccountCreated',
   loaded: 'onLoaded',
   closed: 'onClosed',
+  change: 'onChange',
 }
 
 const processingFormAttributeMap = {

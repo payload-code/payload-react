@@ -48,6 +48,10 @@ exports[`PayloadReact expect state to be updated with Payload when window.Payloa
               [Function],
             ],
             [
+              "success",
+              [Function],
+            ],
+            [
               "invalid",
               [Function],
             ],
@@ -63,8 +67,20 @@ exports[`PayloadReact expect state to be updated with Payload when window.Payloa
               "blur",
               [Function],
             ],
+            [
+              "success",
+              [Function],
+            ],
           ],
           "results": [
+            {
+              "type": "return",
+              "value": undefined,
+            },
+            {
+              "type": "return",
+              "value": undefined,
+            },
             {
               "type": "return",
               "value": undefined,
