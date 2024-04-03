@@ -239,7 +239,7 @@ describe('PayloadReact', () => {
       onValid: jest.fn(),
       onFocus: jest.fn(),
       onBlur: jest.fn(),
-      onChanged: jest.fn(),
+      onChange: jest.fn(),
     }
 
     const form = mount(

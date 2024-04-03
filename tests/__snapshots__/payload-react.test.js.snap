@@ -68,7 +68,7 @@ exports[`PayloadReact expect state to be updated with Payload when window.Payloa
               [Function],
             ],
             [
-              "changed",
+              "change",
               [Function],
             ],
           ],
