@@ -37,7 +37,7 @@ const inputEventsMap = {
   valid: 'onValid',
   focus: 'onFocus',
   blur: 'onBlur',
-  changed: 'onChanged',
+  change: 'onChange',
 }
 
 const processingFormEventsMap = {
@@ -78,7 +78,15 @@ export class PayloadInput extends React.Component {
     this.inputRef = React.createRef()
   }
 
+  isSensitiveField() {
+    return sensitiveFields[
+      this.props.attr || this._pl_input || this.props['pl-input']
+    ]
+  }
+
   componentDidMount() {
+    if (!this.isSensitiveField()) return
+
     Object.entries(inputEventsMap).forEach(([key, value]) => {
       if (value in this.props)
         this.context.addListener(key, this.inputRef, (...args) =>
@@ -88,13 +96,18 @@ export class PayloadInput extends React.Component {
   }
 
   componentWillUnmount() {
+    if (!this.isSensitiveField()) return
+
     Object.entries(inputEventsMap).forEach(([key, value]) => {
       if (value in this.props) this.context.removeListener(key, this.inputRef)
     })
   }
 
   render() {
-    const attrs = getPropAttrs(this.props, Object.values(inputEventsMap))
+    const attrs = getPropAttrs(
+      this.props,
+      this.isSensitiveField() ? Object.values(inputEventsMap) : []
+    )
 
     if (this._pl_input) attrs['pl-input'] = this._pl_input
 
