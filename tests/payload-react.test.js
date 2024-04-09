@@ -7,6 +7,7 @@ import { act } from 'react-dom/test-utils'
 import PayloadReact, {
   CardCode,
   CardNumber,
+  Checkout,
   Expiry,
   PayloadInput,
   PaymentForm,
@@ -33,6 +34,9 @@ function mockPayload() {
     return { on: jest.fn() }
   })
   Payload.ProcessingAccount = jest.fn().mockImplementation(() => {
+    return { on: jest.fn() }
+  })
+  Payload.Checkout = jest.fn().mockImplementation(() => {
     return { on: jest.fn() }
   })
   return Payload
@@ -630,7 +634,7 @@ describe('PayloadReact', () => {
     )
   })
 
-  it('expect ProcessingAccountForm to render html props on div', async () => {
+  it('expect ProcessingAccountForm to render html props on div', () => {
     const { container } = render(
       <ProcessingAccountForm
         clientToken="test_fake_token_1234567"
@@ -693,13 +697,9 @@ describe('PayloadReact', () => {
     )
   })
 
-  it('expect ProcessingAccountForm to render html props on div', async () => {
+  it('expect Checkout to render html props on div', async () => {
     const { container } = render(
-      <ProcessingAccountForm
-        clientToken="test_fake_token_1234567"
-        className="example"
-        legalEntityId="le_example"
-      />
+      <Checkout clientToken="test_fake_token_1234567" className="example" />
     )
 
     expect(container).toMatchInlineSnapshot(`

@@ -2,10 +2,12 @@ import PayloadReact from 'payload-react'
 import {
   CardCode,
   CardNumber,
+  Checkout,
   Expiry,
   PayloadInput,
   PaymentForm,
   ProcessingAccountForm,
+  openCheckout,
   openProcessingAccountForm,
 } from 'payload-react'
 import React, { useState } from 'react'
@@ -115,7 +117,7 @@ function Example2() {
   )
 }
 
-function Example3() {
+function ProcessingFormComponentExample() {
   return (
     <div className="mt-5">
       <h3>Embedded Processing Form Example</h3>
@@ -132,7 +134,7 @@ function Example3() {
   )
 }
 
-function Example4() {
+function ProcessingFormOpenFunctionExample() {
   return (
     <div className="mt-5">
       <h3>Processing Form Modal Example</h3>
@@ -143,7 +145,41 @@ function Example4() {
             clientToken: process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN,
           })
         }>
-        Open Processing Form Modal
+        Open Processing Account Form Modal
+      </button>
+    </div>
+  )
+}
+
+function CheckoutComponentExample() {
+  return (
+    <div className="mt-5">
+      <h3>Checkout Component Example</h3>
+      <Checkout
+        clientToken={process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN}
+        onLoaded={() => {
+          console.log('loaded')
+        }}
+        onProcessed={() => {
+          console.log('processed')
+        }}
+      />
+    </div>
+  )
+}
+
+function CheckoutOpenFunctionExample() {
+  return (
+    <div className="mt-5">
+      <h3>Checkout Modal Example</h3>
+      <button
+        className="btn btn-primary"
+        onClick={(e) =>
+          openCheckout({
+            clientToken: process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN,
+          })
+        }>
+        Open Checkout Modal
       </button>
     </div>
   )
@@ -156,9 +192,13 @@ function App() {
       <hr />
       <Example2 />
       <hr />
-      <Example3 />
+      <ProcessingFormComponentExample />
       <hr />
-      <Example4 />
+      <ProcessingFormOpenFunctionExample />
+      <hr />
+      <CheckoutComponentExample />
+      <hr />
+      <CheckoutOpenFunctionExample />
     </div>
   )
 }
