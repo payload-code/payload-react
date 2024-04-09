@@ -52,6 +52,15 @@ const processingFormAttributeMap = {
   legal_entity_id: 'legalEntityId',
 }
 
+const checkoutEventsMap = {
+  processed: 'onProcessed',
+  authorized: 'onAuthorized',
+  declined: 'onDeclined',
+  success: 'onSuccess',
+  loaded: 'onLoaded',
+  closed: 'onClosed',
+}
+
 function getPropAttrs(props, ignore) {
   const attrs = {}
   for (const key in props) {
@@ -354,6 +363,82 @@ export const openProcessingAccountForm = async (props) => {
   })
 
   return processingAccount
+}
+
+export class Checkout extends React.Component {
+  constructor(props) {
+    super(props)
+    this.props = props
+    this.state = {
+      Payload: props.Payload ? props.Payload : null,
+    }
+    this.checkoutRef = React.createRef()
+    this.checkout = null
+    this.excludeProps = ['Payload', 'clientToken']
+  }
+
+  async componentDidMount() {
+    if (!this.props.clientToken) {
+      return
+    }
+
+    if (!this.state.Payload) {
+      if (!window.Payload) {
+        await getPayload()
+      }
+      this.setState((state) => ({ ...state, Payload: window.Payload }))
+    } else {
+      this.initalizePayload()
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (!prevState.Payload && this.state.Payload) {
+      // Payload is set in our state we can initialize it
+      this.initalizePayload()
+
+      this.checkout = new this.state.Payload.Checkout({
+        container: this.checkoutRef.current,
+        ...this.props,
+      })
+
+      Object.entries(processingFormEventsMap).forEach(([key, value]) => {
+        this.checkout.on(key, (evt, ...args) => {
+          if (value in this.props) this.props[value](evt, ...args)
+        })
+      })
+    }
+  }
+
+  initalizePayload() {
+    this.state.Payload(this.props.clientToken)
+  }
+
+  render() {
+    const props = Object.entries(this.props).reduce((props, [key, value]) => {
+      if (!this.excludeProps.includes(key)) {
+        props[key] = value
+      }
+      return props
+    }, {})
+    return <div ref={this.checkoutRef} {...props}></div>
+  }
+}
+
+export const openCheckout = async (props) => {
+  await getPayload()
+
+  window.Payload(props.clientToken)
+
+  const checkout = new window.Payload.Checkout({
+    ...props,
+  })
+
+  Object.entries(checkoutEventsMap).forEach(([key, value]) => {
+    if (value in props) checkout.on(key, props[value])
+  })
+
+  return checkout
 }
 
 PayloadForm.propTypes = {
