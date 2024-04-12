@@ -126,7 +126,7 @@ function ProcessingFormComponentExample() {
         onLoaded={() => {
           console.log('loaded')
         }}
-        onCreated={() => {
+        onAccountCreated={() => {
           console.log('created')
         }}
       />
@@ -157,6 +157,7 @@ function CheckoutComponentExample() {
       <h3>Checkout Component Example</h3>
       <Checkout
         clientToken={process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN}
+        amount={100}
         onLoaded={() => {
           console.log('loaded')
         }}
@@ -177,6 +178,7 @@ function CheckoutOpenFunctionExample() {
         onClick={(e) =>
           openCheckout({
             clientToken: process.env.REACT_APP_PAYLOAD_CLIENT_TOKEN,
+            amount: 100,
           })
         }>
         Open Checkout Modal

@@ -12,6 +12,7 @@ import PayloadReact, {
   PayloadInput,
   PaymentForm,
   ProcessingAccountForm,
+  openCheckout,
   openProcessingAccountForm,
 } from '../src/payload-react'
 import * as utils from '../src/utils'
@@ -697,9 +698,163 @@ describe('PayloadReact', () => {
     )
   })
 
-  it('expect Checkout to render html props on div', async () => {
+  it('expect Checkout event props to fire', async () => {
+    const Payload = mockPayload()
+
+    const getPayloadMock = jest
+      .spyOn(utils, 'getPayload')
+      .mockImplementation(() => {
+        global.Payload = Payload
+        return Promise.resolve()
+      })
+
+    const checkoutEvents = {
+      onProcessed: jest.fn(),
+      onAuthorized: jest.fn(),
+      onDeclined: jest.fn(),
+      onSuccess: jest.fn(),
+      onLoaded: jest.fn(),
+      onClosed: jest.fn(),
+    }
+
+    const form = mount(
+      <Checkout
+        id="checkout-form"
+        clientToken="test_fake_token_1234567"
+        {...checkoutEvents}
+      />
+    )
+
+    await waitFor(() => {
+      expect(Payload).toHaveBeenCalledWith('test_fake_token_1234567')
+      expect(form.instance().checkoutRef.current).not.toBeUndefined()
+    })
+
+    const checkout = form.instance().checkoutRef.current
+
+    expect(Payload.Checkout.mock.results[0].value.on.mock.calls.length).toBe(
+      Object.keys(checkoutEvents).length
+    )
+    Payload.Checkout.mock.results[0].value.on.mock.calls.forEach(
+      ([evt, cb]) => {
+        const evtName = getReactEvtName(evt)
+
+        if (!(evtName in checkoutEvents)) return
+
+        expect(checkoutEvents[evtName]).not.toHaveBeenCalled()
+
+        const eventObject = { target: checkout }
+
+        cb(eventObject)
+
+        expect(checkoutEvents[evtName]).toHaveBeenCalledWith(eventObject)
+
+        checkoutEvents[evtName].mockClear()
+      }
+    )
+  })
+
+  it('expect checkout event props to update when rerendered', async () => {
+    const Payload = mockPayload()
+
+    const getPayloadMock = jest
+      .spyOn(utils, 'getPayload')
+      .mockImplementation(() => {
+        global.Payload = Payload
+        return Promise.resolve()
+      })
+
+    let successCountValue = 0
+
+    const Test = () => {
+      const [successCount, setSuccessCount] = useState(0)
+
+      successCountValue = successCount
+
+      return (
+        <Checkout
+          id="checkout-form"
+          clientToken="test_fake_token_1234567"
+          onSuccess={(evt) => {
+            setSuccessCount(successCount + 1)
+          }}
+        />
+      )
+    }
+
+    const form = mount(<Test />)
+
+    await waitFor(() => {
+      expect(Payload).toHaveBeenCalledWith('test_fake_token_1234567')
+    })
+
+    const [evt, cb] = Payload.Checkout.mock.results[0].value.on.mock.calls.find(
+      ([evt, cb]) => evt === 'success'
+    )
+
+    expect(successCountValue).toBe(0)
+
+    const eventObject = { target: {} }
+
+    act(() => cb(eventObject))
+
+    expect(successCountValue).toBe(1)
+
+    act(() => cb(eventObject))
+
+    expect(successCountValue).toBe(2)
+  })
+
+  it('expect Checkout init props to pass to Payload.Checkout', async () => {
+    const Payload = mockPayload()
+
+    const getPayloadMock = jest
+      .spyOn(utils, 'getPayload')
+      .mockImplementation(() => {
+        global.Payload = Payload
+        return Promise.resolve()
+      })
+
+    const checkoutEvents = {
+      onProcessed: jest.fn(),
+      onAuthorized: jest.fn(),
+      onDeclined: jest.fn(),
+      onSuccess: jest.fn(),
+      onLoaded: jest.fn(),
+      onClosed: jest.fn(),
+    }
+
+    const form = mount(
+      <Checkout
+        id="checkout-form"
+        className="example"
+        clientToken="test_fake_token_1234567"
+        autoSubmit={true}
+      />
+    )
+
+    await waitFor(() => {
+      expect(Payload).toHaveBeenCalledWith('test_fake_token_1234567')
+      expect(form.instance().checkoutRef.current).not.toBeUndefined()
+    })
+
+    const checkout = form.instance().checkoutRef.current
+    expect(Payload.Checkout.mock.calls[0]).toEqual([
+      {
+        container: expect.any(HTMLElement),
+        autosubmit: true,
+      },
+    ])
+    expect(Payload.Checkout.mock.calls[0][0].container).toBe(checkout)
+  })
+
+  it('expect Checkout to render html props on div', () => {
     const { container } = render(
-      <Checkout clientToken="test_fake_token_1234567" className="example" />
+      <Checkout
+        clientToken="test_fake_token_1234567"
+        className="example"
+        autoSubmit={false}
+      />
     )
 
     expect(container).toMatchInlineSnapshot(`
@@ -709,5 +864,52 @@ describe('PayloadReact', () => {
   />
 </div>
 `)
+  })
+
+  it('expect openCheckout init props to pass to Payload.Checkout', async () => {
+    const Payload = mockPayload()
+
+    const getPayloadMock = jest
+      .spyOn(utils, 'getPayload')
+      .mockImplementation(() => {
+        global.Payload = Payload
+        return Promise.resolve()
+      })
+
+    const checkoutEvents = {
+      onProcessed: jest.fn(),
+      onAuthorized: jest.fn(),
+      onDeclined: jest.fn(),
+      onSuccess: jest.fn(),
+      onLoaded: jest.fn(),
+      onClosed: jest.fn(),
+    }
+
+    const checkout = await openCheckout({
+      clientToken: 'test_fake_token_1234567',
+      autoSubmit: false,
+      ...checkoutEvents,
+    })
+
+    await waitFor(() => {
+      expect(Payload).toHaveBeenCalledWith('test_fake_token_1234567')
+    })
+
+    expect(Payload.Checkout.mock.calls[0]).toEqual([
+      {
+        autosubmit: false,
+      },
+    ])
+
+    expect(Payload.Checkout.mock.results[0].value.on.mock.calls.length).toBe(
+      Object.keys(checkoutEvents).length
+    )
+    Payload.Checkout.mock.results[0].value.on.mock.calls.forEach(
+      ([evt, cb]) => {
+        const evtName = getReactEvtName(evt)
+
+        expect(cb).toBe(checkoutEvents[evtName])
+      }
+    )
   })
 })

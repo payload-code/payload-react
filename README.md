@@ -26,7 +26,9 @@ import {
     RoutingNumber,
     AccountNumber,
     ProcessingAccountForm,
-    openProcessingAccountForm
+    openProcessingAccountForm,
+    Checkout,
+    openCheckout
 } from 'payload-react';
 ```
 

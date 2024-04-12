@@ -61,6 +61,12 @@ const checkoutEventsMap = {
   closed: 'onClosed',
 }
 
+const checkoutAttributeMap = {
+  form: 'form',
+  autosubmit: 'autoSubmit',
+  amount: 'amount',
+}
+
 function getPropAttrs(props, ignore) {
   const attrs = {}
   for (const key in props) {
@@ -374,7 +380,9 @@ export class Checkout extends React.Component {
     }
     this.checkoutRef = React.createRef()
     this.checkout = null
-    this.excludeProps = ['Payload', 'clientToken']
+    this.excludeProps = Object.values(checkoutAttributeMap)
+      .concat(Object.values(checkoutEventsMap))
+      .concat(['Payload', 'clientToken'])
   }
 
   async componentDidMount() {
@@ -397,12 +405,17 @@ export class Checkout extends React.Component {
       // Payload is set in our state we can initialize it
       this.initalizePayload()
 
-      this.checkout = new this.state.Payload.Checkout({
-        container: this.checkoutRef.current,
-        ...this.props,
+      const props = {}
+      Object.entries(checkoutAttributeMap).forEach(([key, value]) => {
+        if (value in this.props) props[key] = this.props[value]
       })
 
-      Object.entries(processingFormEventsMap).forEach(([key, value]) => {
+      this.checkout = new this.state.Payload.Checkout({
+        container: this.checkoutRef.current,
+        ...props,
+      })
+
+      Object.entries(checkoutEventsMap).forEach(([key, value]) => {
         this.checkout.on(key, (evt, ...args) => {
           if (value in this.props) this.props[value](evt, ...args)
         })
@@ -430,8 +443,13 @@ export const openCheckout = async (props) => {
 
   window.Payload(props.clientToken)
 
+  const transformedProps = {}
+  Object.entries(checkoutAttributeMap).forEach(([key, value]) => {
+    if (value in props) transformedProps[key] = props[value]
+  })
+
   const checkout = new window.Payload.Checkout({
-    ...props,
+    ...transformedProps,
   })
 
   Object.entries(checkoutEventsMap).forEach(([key, value]) => {
