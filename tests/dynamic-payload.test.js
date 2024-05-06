@@ -10,6 +10,6 @@ describe('Payload.js', () => {
     expect(document.body.appendChild).toHaveBeenCalled()
 
     const script = document.querySelector('script')
-    expect(script.src).toBe('https://payload.co/Payload.js')
+    expect(script.src).toBe('https://payload.com/Payload.js')
   })
 })

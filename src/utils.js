@@ -10,7 +10,7 @@ export function getPayload() {
 
       const s = document.createElement('script')
 
-      s.setAttribute('src', 'https://payload.co/Payload.js')
+      s.setAttribute('src', 'https://payload.com/Payload.js')
       s.addEventListener('load', () => resolve(window.Payload))
       s.addEventListener('error', reject)
 
