@@ -1,6 +1,6 @@
 # Payload.js React Library
 
-A React library for integrating [Payload.js](https://docs.payload.co/#secure-input) Secure Input.
+A React library for integrating [Payload.js](https://docs.payload.com/#secure-input) Secure Input.
 
 ## Installation
 
@@ -34,7 +34,7 @@ import {
 
 ### API Authentication
 
-To authenticate with the Payload, you'll need a live or test client token for Payload.js. Client tokens can be generated using the secret key accessible from within the Payload dashboard. For more information on generating a client token, see [Authentication](https://docs.payload.co/ui/authentication/).
+To authenticate with the Payload, you'll need a live or test client token for Payload.js. Client tokens can be generated using the secret key accessible from within the Payload dashboard. For more information on generating a client token, see [Authentication](https://docs.payload.com/ui/authentication/).
 
 ### Simple Checkout Form
 
@@ -117,4 +117,4 @@ function OnboardButton() {
 ## Documentation
 
 To get further information on the Payload.js Secure Input library and capabilities,
-visit the unabridged [Payload Documentation](https://docs.payload.co/ui/payload-react/).
+visit the unabridged [Payload Documentation](https://docs.payload.com/ui/payload-react/).
