@@ -20,7 +20,6 @@ const formParamsMap = {
   styles: 'styles',
   payment: 'payment',
   payment_method: 'paymentMethod',
-  disablePaste: 'disable-paste',
 }
 
 const formEventsMap = {
@@ -31,6 +30,10 @@ const formEventsMap = {
   declined: 'onDeclined',
   created: 'onCreated',
   success: 'onSuccess',
+}
+
+const inputPropsMap = {
+  'disable-paste': 'disablePaste',
 }
 
 const inputEventsMap = {
@@ -124,6 +127,13 @@ export class PayloadInput extends React.Component {
       this.props,
       this.isSensitiveField() ? Object.values(inputEventsMap) : []
     )
+
+    Object.entries(inputPropsMap).forEach(([key, value]) => {
+      if (value in attrs) {
+        attrs[key] = String(attrs[value])
+        delete attrs[value]
+      }
+    })
 
     if (this._pl_input) attrs['pl-input'] = this._pl_input
 
