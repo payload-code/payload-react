@@ -1,0 +1,11 @@
+{
+  "include": ["src/payload-react.js"],
+  "compilerOptions": {
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "",
+    "declarationMap": false,
+    "outFile": "main.d.ts"
+  }
+}
