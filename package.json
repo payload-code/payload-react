@@ -4,6 +4,7 @@
   "description": "A simple React wrapper around Payload.js. See https://docs.payload.com for more information.",
   "main": "dist/payload-react.js",
   "module": "dist/payload-react.js",
+  "types": "main.d.ts",
   "scripts": {
     "test": "jest --no-cache --verbose --forceExit --detectOpenHandles",
     "start": "webpack --watch",
@@ -11,7 +12,8 @@
     "build": "npm run clean && NODE_ENV=production babel src/ --out-dir dist --copy-files",
     "prepare": "husky install",
     "eslint": "eslint src --ext .js --fix",
-    "prettier": "prettier --write 'src/**/*.js'"
+    "prettier": "prettier --write 'src/**/*.js'",
+    "tsc": "tsc"
   },
   "keywords": [],
   "author": "Payload",
@@ -46,6 +48,7 @@
     "node-fetch": "^2.6.12",
     "prettier": "^3.0.0",
     "regenerator-runtime": "^0.13.11",
+    "typescript": "^5.4.5",
     "webpack": "^5.24.4",
     "webpack-cli": "^4.9.1"
   },
