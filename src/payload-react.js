@@ -32,6 +32,10 @@ const formEventsMap = {
   success: 'onSuccess',
 }
 
+const inputPropsMap = {
+  'disable-paste': 'disablePaste',
+}
+
 const inputEventsMap = {
   invalid: 'onInvalid',
   valid: 'onValid',
@@ -123,6 +127,13 @@ export class PayloadInput extends React.Component {
       this.props,
       this.isSensitiveField() ? Object.values(inputEventsMap) : []
     )
+
+    Object.entries(inputPropsMap).forEach(([key, value]) => {
+      if (value in attrs) {
+        attrs[key] = String(attrs[value])
+        delete attrs[value]
+      }
+    })
 
     if (this._pl_input) attrs['pl-input'] = this._pl_input
 
