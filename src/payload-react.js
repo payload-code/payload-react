@@ -34,6 +34,7 @@ const formEventsMap = {
 
 const inputPropsMap = {
   'disable-paste': 'disablePaste',
+  'disable-submit': 'disableSubmit',
 }
 
 const inputEventsMap = {
