@@ -58,7 +58,7 @@ describe('PayloadReact', () => {
 
     input.focus()
     expect(input).toHaveFocus()
-    userEvent.paste('4111', { document: iframeContent })
+    await userEvent.paste('4111', { document: iframeContent })
     expect(input).toHaveValue('')
   }, 10000)
 })
