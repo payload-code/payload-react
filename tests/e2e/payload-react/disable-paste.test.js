@@ -1,22 +1,9 @@
 import '@testing-library/jest-dom'
-import { cleanup, fireEvent, render, waitFor } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { mount, shallow } from 'enzyme'
-import React, { useState } from 'react'
-import { act } from 'react-dom/test-utils'
+import React from 'react'
 
-import PayloadReact, {
-  CardCode,
-  CardNumber,
-  Checkout,
-  Expiry,
-  PayloadInput,
-  PaymentForm,
-  ProcessingAccountForm,
-  openCheckout,
-  openProcessingAccountForm,
-} from '../../../src/payload-react'
-import * as utils from '../../../src/utils'
+import { CardNumber, PaymentForm } from '../../../src/payload-react'
 
 describe('PayloadReact', () => {
   it('testpaste disable', async () => {
