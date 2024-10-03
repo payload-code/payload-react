@@ -20,8 +20,6 @@ import * as utils from '../../../src/utils'
 
 describe('PayloadReact', () => {
   it('testpaste enable', async () => {
-    console.log('testpaste')
-
     const Test = () => {
       return (
         <PaymentForm clientToken="test_fake_token_12345679">
@@ -60,7 +58,7 @@ describe('PayloadReact', () => {
 
     input.focus()
     expect(input).toHaveFocus()
-    userEvent.paste('4111', { document: iframeContent })
+    await userEvent.paste('4111', { document: iframeContent })
     expect(input).toHaveValue('4111')
   })
 })

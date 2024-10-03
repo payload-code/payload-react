@@ -20,7 +20,6 @@ import * as utils from '../../../src/utils'
 
 describe('PayloadReact', () => {
   it('testpaste disable', async () => {
-    console.log('testpaste disable')
     const Test = () => {
       return (
         <PaymentForm clientToken="test_fake_token_1234567">
