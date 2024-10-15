@@ -166,6 +166,8 @@ describe('PayloadReact', () => {
       <PayloadReact.form.payment
         clientToken="test_fake_token_1234567"
         autoSubmit={false}
+        preventDefaultOnSubmit={false}
+        preventSubmitOnEnter={false}
         styles={{ invalid: 'is-invalid' }}
         payment={{ status: 'authorized' }}>
         <button type="submit">Submit Payment</button>
@@ -181,6 +183,8 @@ describe('PayloadReact', () => {
     )
     expect(form.state('Payload').Form).toHaveBeenCalledWith({
       autosubmit: false,
+      preventDefaultOnSubmit: false,
+      preventSubmitOnEnter: false,
       styles: { invalid: 'is-invalid' },
       payment: { status: 'authorized' },
       form: expect.anything(),
@@ -201,6 +205,8 @@ describe('PayloadReact', () => {
       <PayloadReact.form.payment_method
         clientToken="test_fake_token_1234567"
         autoSubmit={false}
+        preventDefaultOnSubmit={false}
+        preventSubmitOnEnter={false}
         styles={{ invalid: 'is-invalid' }}
         paymentMethod={{ customet_id: '12345' }}>
         <button type="submit">Submit Payment</button>
@@ -216,6 +222,8 @@ describe('PayloadReact', () => {
     )
     expect(form.state('Payload').Form).toHaveBeenCalledWith({
       autosubmit: false,
+      preventDefaultOnSubmit: false,
+      preventSubmitOnEnter: false,
       styles: { invalid: 'is-invalid' },
       payment_method: { customet_id: '12345' },
       form: expect.anything(),
