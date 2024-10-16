@@ -20,6 +20,8 @@ const formParamsMap = {
   styles: 'styles',
   payment: 'payment',
   payment_method: 'paymentMethod',
+  preventDefaultOnSubmit: 'preventDefaultOnSubmit',
+  preventSubmitOnEnter: 'preventSubmitOnEnter',
 }
 
 const formEventsMap = {
