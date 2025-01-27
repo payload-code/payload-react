@@ -1,110 +1,59 @@
 import PropTypes from 'prop-types'
-import React, { useEffect, useRef } from 'react'
+import React, { forwardRef } from 'react'
 
-import { getPayload } from './utils.js'
+import {
+  checkoutAttributeMap,
+  checkoutEventsMap,
+  formEventsMap,
+  formParamsMap,
+  inputEventsMap,
+  inputPropsMap,
+  processingFormAttributeMap,
+  processingFormEventsMap,
+  sensitiveFields,
+} from './mappings.js'
+import { cacheCls, getPayload, getPropAttrs, invertObject } from './utils.js'
 
 const PayloadFormContext = React.createContext(null)
 
-const sensitiveFields = {
-  account_number: true,
-  routing_number: true,
-  card_code: true,
-  cvc: true,
-  card_number: true,
-  expiry: true,
-  card: true,
-}
-
-const formParamsMap = {
-  autosubmit: 'autoSubmit',
-  styles: 'styles',
-  payment: 'payment',
-  payment_method: 'paymentMethod',
-  preventDefaultOnSubmit: 'preventDefaultOnSubmit',
-  preventSubmitOnEnter: 'preventSubmitOnEnter',
-}
-
-const formEventsMap = {
-  processing: 'onProcessing',
-  processed: 'onProcessed',
-  authorized: 'onAuthorized',
-  error: 'onError',
-  declined: 'onDeclined',
-  created: 'onCreated',
-  success: 'onSuccess',
-}
-
-const inputPropsMap = {
-  'disable-paste': 'disablePaste',
-}
-
-const inputEventsMap = {
-  invalid: 'onInvalid',
-  valid: 'onValid',
-  focus: 'onFocus',
-  blur: 'onBlur',
-  change: 'onChange',
-}
-
-const processingFormEventsMap = {
-  success: 'onSuccess',
-  account_created: 'onAccountCreated',
-  loaded: 'onLoaded',
-  closed: 'onClosed',
-}
-
-const processingFormAttributeMap = {
-  form: 'form',
-  legal_entity_id: 'legalEntityId',
-}
-
-const checkoutEventsMap = {
-  processed: 'onProcessed',
-  authorized: 'onAuthorized',
-  declined: 'onDeclined',
-  success: 'onSuccess',
-  loaded: 'onLoaded',
-  closed: 'onClosed',
-}
-
-const checkoutAttributeMap = {
-  form: 'form',
-  autosubmit: 'autoSubmit',
-  amount: 'amount',
-}
-
-function getPropAttrs(props, ignore) {
-  const attrs = {}
-  for (const key in props) {
-    if (key == 'children') continue
-    if (ignore && ignore.includes(key)) continue
-    attrs[key] = props[key]
-  }
-  return attrs
-}
-
-const __cls_cache = {}
-
-function cacheCls(name, cls) {
-  if (!(name in __cls_cache)) __cls_cache[name] = cls
-  return __cls_cache[name]
-}
-
+/**
+ * Represents a form input component that handles sensitive data.
+ *
+ * @class PayloadInput
+ * @extends React.Component
+ */
 export class PayloadInput extends React.Component {
+  /**
+   * The context type for the component.
+   *
+   * @type {PayloadFormContext}
+   */
   static contextType = PayloadFormContext
 
+  /**
+   * Creates an instance of PayloadInput.
+   * @param {Object} props - The props for the component.
+   */
   constructor(props) {
     super(props)
     this.props = props
     this.inputRef = React.createRef()
   }
 
+  /**
+   * Checks if the field is sensitive.
+   *
+   * @returns {boolean} - True if the field is sensitive, false otherwise.
+   */
   isSensitiveField() {
     return sensitiveFields[
       this.props.attr || this._pl_input || this.props['pl-input']
     ]
   }
 
+  /**
+   * Adds event listeners when the component mounts.
+   */
   componentDidMount() {
     if (!this.isSensitiveField()) return
 
@@ -116,6 +65,9 @@ export class PayloadInput extends React.Component {
     })
   }
 
+  /**
+   * Removes event listeners when the component unmounts.
+   */
   componentWillUnmount() {
     if (!this.isSensitiveField()) return
 
@@ -124,6 +76,11 @@ export class PayloadInput extends React.Component {
     })
   }
 
+  /**
+   * Renders an input element or a div element based on the props and sensitivity of the field.
+   *
+   * @returns {JSX.Element} - Returns a JSX element representing an input or div element.
+   */
   render() {
     const attrs = getPropAttrs(
       this.props,
@@ -155,6 +112,18 @@ export class PayloadInput extends React.Component {
   }
 }
 
+/**
+ * Represents a form component that integrates with the Payload.js library for handling form submissions.
+ *
+ * @param {Object} props - The properties passed to the component.
+ * @param {string} props.clientToken - The client token required for initializing the third-party library.
+ * @param {Object} props.children - The child components to be rendered within the form.
+ * @param {Function} props.Payload - (Development Use Only) The third-party library for handling form submissions.
+ *
+ * @returns {JSX.Element} - A form component integrated with the third-party library.
+ *
+ * @throws {Error} - If the client token is missing or if there is an issue initializing the third-party library.
+ */
 export class PayloadForm extends React.Component {
   constructor(props) {
     super(props)
@@ -166,6 +135,15 @@ export class PayloadForm extends React.Component {
     this.formRef = React.createRef()
   }
 
+  /**
+   * Asynchronously initializes the component by checking for the presence of a client token and Payload.js.
+   * If the client token is not provided, the function will return early.
+   * If Payload.js is not already stored in the component's state, it will attempt to retrieve it from the window object.
+   * If Payload.js is successfully retrieved, it will be stored in the component's state.
+   * Finally, the function will call the initializePayload method to initialize the Payload.js component.
+   *
+   * @returns {void}
+   */
   async componentDidMount() {
     if (!this.props.clientToken) {
       return
@@ -179,13 +157,32 @@ export class PayloadForm extends React.Component {
     } else this.initalizePayload()
   }
 
+  /**
+   * componentDidUpdate - Lifecycle method that is invoked immediately after updating occurs.
+   *
+   * @param {object} prevProps - The previous props before the update.
+   * @param {object} prevState - The previous state before the update.
+   * @param {object} snapshot - The snapshot value returned by getSnapshotBeforeUpdate.
+   *
+   * @returns {void}
+   *
+   * This method checks if the previous state did not have a Payload, but the current state does have a Payload.
+   * If this condition is met, it calls the initializePayload method to initialize the Payload.js component.
+   */
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!prevState.Payload && this.state.Payload) {
       // Payload is set in our state we can initialize it
       this.initalizePayload()
+    } else {
+      this.updatePayload()
     }
   }
 
+  /**
+   * Initializes Payload.js for the form based on the client token and form parameters.
+   *
+   * @returns {void}
+   */
   initalizePayload() {
     this.state.Payload(this.props.clientToken)
 
@@ -215,6 +212,21 @@ export class PayloadForm extends React.Component {
     })
   }
 
+  updatePayload() {
+    if (this.props.payment) this.pl_form.params.payment = this.props.payment
+    if (this.props.paymentMethod)
+      this.pl_form.params[invertObject(formParamsMap).paymentMethod] =
+        this.props.paymentMethod
+  }
+
+  /**
+   * Adds a listener for a specific event.
+   *
+   * @param {string} evt - The event to listen for.
+   * @param {Object} ref - The reference to the object that the listener is attached to.
+   * @param {function} cb - The callback function to be executed when the event is triggered.
+   * @returns {void}
+   */
   addListener(evt, ref, cb) {
     const listeners = this.state.listeners
     if (!(evt in listeners)) listeners[evt] = []
@@ -222,14 +234,36 @@ export class PayloadForm extends React.Component {
     this.setState({ listeners })
   }
 
+  /**
+   * Removes a listener from the event listeners list.
+   *
+   * @param {string} evt - The event name to remove the listener from.
+   * @param {Object} ref - The reference to the listener function to be removed.
+   *
+   * @returns {void}
+   */
   removeListener(evt, ref) {
     const listeners = this.state.listeners
-    const index = listeners[evt]?.findIndex(([r, cb]) => r === ref) ?? -1
+    const index = listeners[evt]?.findIndex(([r]) => r === ref) ?? -1
 
     if (index != -1) {
       listeners[evt].splice(index, 1)
       this.setState({ listeners })
     }
+  }
+
+  /**
+   * Submits the form using the Payload.js Form.submit method.
+   *
+   * This method triggers the submission of the form using the Payload.js library's Form.submit method.
+   * It is important to note that this method does not handle the form submission logic itself,
+   * but rather delegates it to the Payload.js library.
+   *
+   * @returns {Promise} A Promise that resolves when the form submission is successful.
+   * @throws {Error} If the form submission fails or encounters an error.
+   */
+  submit() {
+    return this.pl_form.submit()
   }
 
   render() {
@@ -241,7 +275,7 @@ export class PayloadForm extends React.Component {
       'Payload',
     ])
 
-    if (this._pl_form) attrs['pl-form'] = this._pl_form
+    if (this._pl_form_type) attrs['pl-form'] = this._pl_form_type
 
     return (
       <PayloadFormContext.Provider
@@ -257,46 +291,113 @@ export class PayloadForm extends React.Component {
   }
 }
 
-export const PaymentForm = ({ children, ...props }) => {
+/**
+ * A higher order component that wraps <PayloadForm> for processing payments.
+ *
+ * @param {Object} children - The child components to be rendered within the PaymentForm.
+ * @param {Object} props - Additional props to be passed to the PaymentForm component.
+ * @param {Object} ref - A reference to the PaymentForm component.
+ *
+ * @returns {JSX.Element} - Returns a JSX element representing the PaymentForm component.
+ */
+export const PaymentForm = forwardRef(({ children, ...props }, ref) => {
   return (
-    <PayloadForm pl-form="payment" {...props}>
+    <PayloadForm ref={ref} pl-form="payment" {...props}>
       {children}
     </PayloadForm>
   )
-}
+})
 
-export const PaymentMethodForm = ({ children, ...props }) => {
+/**
+ * A higher order component that wraps <PayloadForm> for collecting payment method information.
+ *
+ * @param {Object} children - The child components to be rendered within the form.
+ * @param {Object} props - Additional props to be passed to the form component.
+ * @param {Object} ref - A reference to the form component.
+ * @returns {JSX.Element} - The rendered form component with the provided children.
+ */
+export const PaymentMethodForm = forwardRef(({ children, ...props }, ref) => {
   return (
-    <PayloadForm pl-form="payment_method" {...props}>
+    <PayloadForm ref={ref} pl-form="payment_method" {...props}>
       {children}
     </PayloadForm>
   )
-}
+})
 
+/**
+ * Creates a card input component.
+ *
+ * @param {Object} props - The properties to be passed to the component.
+ * @returns {JSX.Element} - A card input component.
+ */
 export const Card = (props) => {
   return <PayloadInput pl-input="card" {...props} />
 }
 
+/**
+ * Creates a card number input component.
+ *
+ * @param {Object} props - The properties to be passed to the component.
+ * @returns {JSX.Element} - A card number input component.
+ */
 export const CardNumber = (props) => {
   return <PayloadInput pl-input="card_number" {...props} />
 }
 
+/**
+ * Creates an expiry input component.
+ *
+ * @param {Object} props - The properties to be passed to the component.
+ * @returns {JSX.Element} - An expiry input component.
+ */
 export const Expiry = (props) => {
   return <PayloadInput pl-input="expiry" {...props} />
 }
 
+/**
+ * Creates a card code input component.
+ *
+ * @param {Object} props - The properties to be passed to the component.
+ * @returns {JSX.Element} - A card code input component.
+ */
 export const CardCode = (props) => {
   return <PayloadInput pl-input="card_code" {...props} />
 }
 
+/**
+ * Renders an input field for routing number.
+ *
+ * @param {Object} props - The props to be passed to the component.
+ * @returns {JSX.Element} - A JSX element representing the input field for routing number.
+ */
 export const RoutingNumber = (props) => {
   return <PayloadInput pl-input="routing_number" {...props} />
 }
 
+/**
+ * Renders an input field for account number.
+ *
+ * @param {Object} props - The props to be passed to the component.
+ * @returns {JSX.Element} - A JSX element representing the input field for account number.
+ */
 export const AccountNumber = (props) => {
   return <PayloadInput pl-input="account_number" {...props} />
 }
 
+/**
+ * ProcessingAccountForm component for rendering a processing account form
+ *
+ * This component is responsible for rendering a processing account form using the provided client token.
+ * It initializes the Payload.js object, sets up event listeners, and renders the form using the provided props.
+ *
+ * @param {Object} props - The props object containing the Payload object and client token
+ * @param {string} props.clientToken - The client token used for authentication
+ * @param {Object} props.Payload - (Development Use Only) The Payload object used for processing account form
+ *
+ * @returns {JSX.Element} - The rendered processing account form component
+ *
+ * @throws {Error} - If the client token is not provided
+ */
 export class ProcessingAccountForm extends React.Component {
   constructor(props) {
     super(props)
@@ -311,6 +412,16 @@ export class ProcessingAccountForm extends React.Component {
       .concat(['Payload', 'clientToken'])
   }
 
+  /**
+   * Asynchronously initializes the component by checking for the presence of a client token and payload.
+   * If the client token is not present, the function returns early.
+   * If Payload.js is not present in the component state, it checks if Payload.js is available in the global window object.
+   * If Payload.js is not available in the global window object, it fetches Payload.js using the getPayload function.
+   * Once Payload.js is available, it updates the component state with Payload object.
+   * If Payload.js is already present in the component state, it calls the initializePayload function.
+   *
+   * @returns {void}
+   */
   async componentDidMount() {
     if (!this.props.clientToken) {
       return
@@ -326,6 +437,19 @@ export class ProcessingAccountForm extends React.Component {
     }
   }
 
+  /**
+   * componentDidUpdate - Lifecycle method that is called after a component has been updated.
+   *
+   * @param {object} prevProps - The previous props of the component.
+   * @param {object} prevState - The previous state of the component.
+   * @param {object} snapshot - The snapshot value returned by getSnapshotBeforeUpdate.
+   *
+   * @returns {void}
+   *
+   * This method checks if the previous state did not have a 'Payload' property but the current state does.
+   * If this condition is met, initialize Payload and create a new 'ProcessingAccount' object.
+   * It then maps certain props from the component to the 'ProcessingAccount' object and sets up event listeners.
+   */
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!prevState.Payload && this.state.Payload) {
       // Payload is set in our state we can initialize it
@@ -363,6 +487,12 @@ export class ProcessingAccountForm extends React.Component {
   }
 }
 
+/**
+ * Opens the processing account form using the provided props.
+ *
+ * @param {Object} props - The props object containing the necessary information to populate the form.
+ * @returns {Promise<Object>} - A Promise that resolves to the processing account object.
+ */
 export const openProcessingAccountForm = async (props) => {
   await getPayload()
 
@@ -384,6 +514,17 @@ export const openProcessingAccountForm = async (props) => {
   return processingAccount
 }
 
+/**
+ * Checkout component for handling payment processing
+ *
+ * @param {Object} props - The props for the Checkout component
+ * @param {string} props.clientToken - The client token for authentication
+ * @param {Object} props.Payload - (Development Use Only) The Payload object for payment processing
+ *
+ * @returns {JSX.Element} - The rendered Checkout component
+ *
+ * @throws {Error} - If clientToken is not provided
+ */
 export class Checkout extends React.Component {
   constructor(props) {
     super(props)
@@ -398,6 +539,16 @@ export class Checkout extends React.Component {
       .concat(['Payload', 'clientToken'])
   }
 
+  /**
+   * Asynchronously initializes the component by checking for the presence of a client token and payload.
+   * If the client token is not present, the function returns early.
+   * If Payload.js is not present in the component state, it checks if Payload.js is available in the global window object.
+   * If Payload.js is not available in the global window object, it fetches Payload.js using the getPayload function.
+   * Once Payload.js is available, it updates the component state with the Payload object.
+   * If Payload.js is already present in the component state, it calls the initializePayload function.
+   *
+   * @returns {void}
+   */
   async componentDidMount() {
     if (!this.props.clientToken) {
       return
@@ -413,6 +564,19 @@ export class Checkout extends React.Component {
     }
   }
 
+  /**
+   * componentDidUpdate - Lifecycle method that is called after a component has been updated.
+   *
+   * @param {object} prevProps - The previous props of the component.
+   * @param {object} prevState - The previous state of the component.
+   * @param {object} snapshot - The snapshot value returned by getSnapshotBeforeUpdate.
+   *
+   * @returns {void}
+   *
+   * This method checks if the previous state did not have a 'Payload' property but the current state does.
+   * If this condition is met, it initializes the 'Payload' and creates a new 'Checkout' instance using the 'Payload'.
+   * It then sets up event listeners for the 'Checkout' instance based on the 'checkoutEventsMap' and calls corresponding props functions.
+   */
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!prevState.Payload && this.state.Payload) {
       // Payload is set in our state we can initialize it
@@ -451,6 +615,13 @@ export class Checkout extends React.Component {
   }
 }
 
+/**
+ * Opens Payload.js Checkout using the provided props and returns the checkout object.
+ *
+ * @param {Object} props - The props object containing clientToken and other checkout attributes.
+ * @returns {Object} - The checkout object created using the provided props.
+ * @throws {Error} - If there is an issue with getting Payload.js object or creating the checkout object.
+ */
 export const openCheckout = async (props) => {
   await getPayload()
 
@@ -477,6 +648,9 @@ PayloadForm.propTypes = {
   Payload: PropTypes.func,
 }
 
+/**
+ * @deprecated Use PayloadForm and PayloadInput and their higher order components
+ */
 const PayloadReact = {
   input: new Proxy(
     {},
@@ -524,7 +698,7 @@ const PayloadReact = {
           'form.' + name,
           class extends PayloadForm {
             render() {
-              this._pl_form = name
+              this._pl_form_type = name
               return super.render()
             }
           }
