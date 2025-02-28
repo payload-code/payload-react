@@ -39,6 +39,8 @@ export const inputEventsMap = {
   change: 'onChange',
 }
 
+export const ignoredEventsForStandardInput = ['onFocus', 'onBlur', 'onChange']
+
 export const processingFormEventsMap = {
   success: 'onSuccess',
   account_created: 'onAccountCreated',

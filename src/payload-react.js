@@ -6,6 +6,7 @@ import {
   checkoutEventsMap,
   formEventsMap,
   formParamsMap,
+  ignoredEventsForStandardInput,
   inputEventsMap,
   inputPropsMap,
   processingFormAttributeMap,
@@ -55,9 +56,12 @@ export class PayloadInput extends React.Component {
    * Adds event listeners when the component mounts.
    */
   componentDidMount() {
-    if (!this.isSensitiveField()) return
-
     Object.entries(inputEventsMap).forEach(([key, value]) => {
+      if (
+        !this.isSensitiveField() &&
+        ignoredEventsForStandardInput.includes(value)
+      )
+        return
       if (value in this.props)
         this.context.addListener(key, this.inputRef, (...args) =>
           this.props[value](...args)
@@ -84,7 +88,10 @@ export class PayloadInput extends React.Component {
   render() {
     const attrs = getPropAttrs(
       this.props,
-      this.isSensitiveField() ? Object.values(inputEventsMap) : []
+      Object.values(inputEventsMap).filter(
+        (e) =>
+          this.isSensitiveField() || !ignoredEventsForStandardInput.includes(e)
+      )
     )
 
     Object.entries(inputPropsMap).forEach(([key, value]) => {
@@ -145,16 +152,12 @@ export class PayloadForm extends React.Component {
    * @returns {void}
    */
   async componentDidMount() {
-    if (!this.props.clientToken) {
-      return
-    }
-
     if (!this.state.Payload) {
       if (!window.Payload) {
         await getPayload()
       }
       this.setState((state) => ({ ...state, Payload: window.Payload }))
-    } else this.initalizePayload()
+    } else if (this.props.clientToken) this.initalizePayload()
   }
 
   /**
@@ -170,10 +173,13 @@ export class PayloadForm extends React.Component {
    * If this condition is met, it calls the initializePayload method to initialize the Payload.js component.
    */
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (!prevState.Payload && this.state.Payload) {
+    if (
+      (!prevState.Payload && this.state.Payload && this.props.clientToken) ||
+      (this.state.Payload && !prevProps.clientToken && this.props.clientToken)
+    ) {
       // Payload is set in our state we can initialize it
       this.initalizePayload()
-    } else {
+    } else if (this.state.Payload && this.props.clientToken) {
       this.updatePayload()
     }
   }

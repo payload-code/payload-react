@@ -20,7 +20,7 @@ export function getPayload() {
 
       const s = document.createElement('script')
 
-      s.setAttribute('src', 'https://payload.com/Payload.js')
+      s.setAttribute('src', 'http://payload-dev.com:8000/Payload.js')
       s.addEventListener('load', () => {
         loadingPromise = null
         resolve(window.Payload)
