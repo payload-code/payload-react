@@ -9,6 +9,7 @@ import PayloadReact, {
   CardNumber,
   Checkout,
   Expiry,
+  PayloadForm,
   PayloadInput,
   PaymentForm,
   ProcessingAccountForm,
@@ -31,8 +32,8 @@ const getReactEvtName = (evt) =>
 
 function mockPayload() {
   const Payload = jest.fn()
-  Payload.Form = jest.fn().mockImplementation(() => {
-    return { on: jest.fn() }
+  Payload.Form = jest.fn().mockImplementation((opts) => {
+    return { on: jest.fn(), submit: jest.fn(), params: opts }
   })
   Payload.ProcessingAccount = jest.fn().mockImplementation(() => {
     return { on: jest.fn() }
@@ -491,6 +492,94 @@ describe('PayloadReact', () => {
   />
 </div>
 `)
+    }
+  )
+
+  it('expect ref.current.submit to call Payload.js Form.submit', async () => {
+    const Payload = mockPayload()
+
+    const getPayloadMock = jest
+      .spyOn(utils, 'getPayload')
+      .mockImplementation(() => {
+        global.Payload = Payload
+        return Promise.resolve()
+      })
+
+    const paymentFormRef = React.createRef()
+
+    const Test = () => {
+      return (
+        <PaymentForm ref={paymentFormRef} clientToken="test_fake_token_1234567">
+          <CardNumber id="card-number" />
+          <button type="submit">Submit Payment</button>
+        </PaymentForm>
+      )
+    }
+
+    const form = mount(<Test />)
+
+    await waitFor(() => {
+      expect(Payload).toHaveBeenCalledWith('test_fake_token_1234567')
+      expect(form.find('#card-number').exists()).toBe(true)
+    })
+
+    expect(Payload.Form.mock.results[0].value.submit).not.toHaveBeenCalled()
+
+    paymentFormRef.current.submit()
+
+    expect(Payload.Form.mock.results[0].value.submit).toHaveBeenCalled()
+  })
+
+  it.each([
+    ['payment', 'payment'],
+    ['paymentMethod', 'payment_method'],
+  ])(
+    'expect prefill props to PayloadForm to update when rerendered',
+    async (propName, paramName) => {
+      const Payload = mockPayload()
+
+      const getPayloadMock = jest
+        .spyOn(utils, 'getPayload')
+        .mockImplementation(() => {
+          global.Payload = Payload
+          return Promise.resolve()
+        })
+
+      let setObjectRef
+
+      const Test = () => {
+        const [obj, setObject] = useState({})
+
+        setObjectRef = setObject
+
+        return (
+          <PayloadForm
+            {...{ [propName]: obj }}
+            clientToken="test_fake_token_1234567">
+            <CardNumber id="card-number" />
+            <button type="submit">Submit Payment</button>
+          </PayloadForm>
+        )
+      }
+
+      const form = mount(<Test />)
+
+      await waitFor(() => {
+        expect(Payload).toHaveBeenCalledWith('test_fake_token_1234567')
+        expect(form.find('#card-number').exists()).toBe(true)
+      })
+
+      expect(
+        Payload.Form.mock.results[0].value.params[paramName]
+      ).toStrictEqual({})
+
+      setObjectRef({ changed: true })
+
+      expect(
+        Payload.Form.mock.results[0].value.params[paramName]
+      ).toStrictEqual({
+        changed: true,
+      })
     }
   )
 

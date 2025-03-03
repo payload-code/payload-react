@@ -123,6 +123,18 @@ exports[`PayloadReact expect state to be updated with Payload when window.Payloa
             },
           ],
         },
+        "params": {
+          "form": <form
+            pl-form="payment"
+          >
+            <button
+              type="submit"
+            >
+              Submit Payment
+            </button>
+          </form>,
+        },
+        "submit": [MockFunction],
       },
     },
   ],
