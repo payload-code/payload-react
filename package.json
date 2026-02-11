@@ -4,15 +4,17 @@
   "description": "A simple React wrapper around Payload.js. See https://docs.payload.com for more information.",
   "main": "dist/payload-react.js",
   "module": "dist/payload-react.js",
-  "types": "main.d.ts",
+  "types": "dist/payload-react.d.ts",
   "scripts": {
     "test": "jest --no-cache --verbose --forceExit --detectOpenHandles",
     "start": "webpack --watch",
     "clean": "rm -rf dist",
-    "build": "npm run clean && NODE_ENV=production babel src/ --out-dir dist --copy-files",
+    "build:js": "NODE_ENV=production babel src/ --out-dir dist --copy-files --extensions \".js,.jsx,.ts,.tsx\"",
+    "build:types": "tsc -p tsconfig.build.json",
+    "build": "npm run clean && npm run build:js && npm run build:types",
     "prepare": "husky install",
-    "eslint": "eslint src --ext .js --fix",
-    "prettier": "prettier --write 'src/**/*.js'",
+    "eslint": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+    "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
     "typecheck": "tsc -p tsconfig.json",
     "tsc": "tsc -p tsconfig.json"
   },
@@ -35,8 +37,8 @@
     "@testing-library/user-event": "^14.5.2",
     "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "@types/jest": "^29.5.3",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "^16.14.35",
+    "@types/react-dom": "^16.9.24",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@typescript-eslint/parser": "^8.55.0",
     "babel-loader": "^8.3.0",
@@ -77,16 +79,12 @@
     }
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --quiet --cache --fix"
-    ],
-    "*.{js}": [
+    "*.{js,jsx,ts,tsx}": [
       "prettier --write"
     ]
   },
   "files": [
-    "dist",
-    "main.d.ts"
+    "dist"
   ],
   "browserslist": [
     ">0.2%",

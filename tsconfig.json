@@ -10,8 +10,8 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "payload-react": ["./main.d.ts"]
+      "payload-react": ["./src/payload-react"]
     }
   },
-  "include": ["main.d.ts", "tests/types/**/*.ts", "tests/types/**/*.tsx"]
+  "include": ["src/**/*", "tests/types/**/*.ts", "tests/types/**/*.tsx"]
 }

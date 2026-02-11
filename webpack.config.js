@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/payload-react.js',
+  entry: './src/payload-react.tsx',
   mode: 'production',
   output: {
     path: path.resolve('dist'),
@@ -14,7 +14,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|jsx|ts|tsx)$/,
         use: { loader: 'babel-loader' },
         exclude: /node_modules/
       }

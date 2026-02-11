@@ -1,5 +1,6 @@
 {
   "extends": ["prettier"],
+  "parser": "@typescript-eslint/parser",
   "plugins": ["prettier"],
   "parserOptions": {
     "sourceType": "module",

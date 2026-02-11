@@ -17,9 +17,9 @@ jobs:
       - name: install
         run: npm i
       - name: ESLint
-        run: npx eslint src --ext .js
+        run: npx eslint src --ext .js,.jsx,.ts,.tsx
       - name: Prettier
-        run: npx prettier -c 'src/**/*.js'
+        run: npx prettier -c 'src/**/*.{js,jsx,ts,tsx}'
       - name: Typecheck
         run: npm run typecheck
       - name: Tests
