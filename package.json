@@ -13,7 +13,8 @@
     "prepare": "husky install",
     "eslint": "eslint src --ext .js --fix",
     "prettier": "prettier --write 'src/**/*.js'",
-    "tsc": "tsc"
+    "typecheck": "tsc -p tsconfig.json",
+    "tsc": "tsc -p tsconfig.json"
   },
   "keywords": [],
   "author": "Payload",
@@ -28,11 +29,16 @@
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.16.4",
     "@babel/preset-react": "^7.16.0",
+    "@babel/preset-typescript": "^7.28.5",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.5.2",
     "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "@types/jest": "^29.5.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.55.0",
+    "@typescript-eslint/parser": "^8.55.0",
     "babel-loader": "^8.3.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.7",
@@ -79,7 +85,8 @@
     ]
   },
   "files": [
-    "dist"
+    "dist",
+    "main.d.ts"
   ],
   "browserslist": [
     ">0.2%",

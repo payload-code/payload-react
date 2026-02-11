@@ -2,9 +2,9 @@ name: Payload React
 
 on:
   pull_request:
-    branches: ["master"]
+    branches: ['master']
   push:
-    branches: ["master"]
+    branches: ['master']
 
 jobs:
   test:
@@ -20,5 +20,7 @@ jobs:
         run: npx eslint src --ext .js
       - name: Prettier
         run: npx prettier -c 'src/**/*.js'
+      - name: Typecheck
+        run: npm run typecheck
       - name: Tests
         run: npm t
