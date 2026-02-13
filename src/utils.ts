@@ -10,9 +10,6 @@ declare global {
   }
 }
 
-/**
- * Retrieves the Payload object asynchronously.
- */
 export function getPayload(): Promise<PayloadSdkFn | undefined> {
   if (!loadingPromise)
     loadingPromise = new Promise((resolve, reject) => {
@@ -40,7 +37,7 @@ export function getPayload(): Promise<PayloadSdkFn | undefined> {
 }
 
 export function invertObject(
-  obj: Record<string, string>
+  obj: Readonly<Record<string, string>>
 ): Record<string, string> {
   return Object.entries(obj).reduce(
     (a, [k, v]) => ({ ...a, [v]: k }),
@@ -48,8 +45,8 @@ export function invertObject(
   )
 }
 
-export function getPropAttrs<T extends Record<string, unknown>>(
-  props: T,
+export function getPropAttrs(
+  props: Record<string, unknown>,
   ignore?: readonly string[]
 ): Record<string, unknown> {
   const attrs: Record<string, unknown> = {}
@@ -64,4 +61,9 @@ export function getPropAttrs<T extends Record<string, unknown>>(
 export function cacheCls<T>(name: string, cls: T): T {
   if (!(name in __clsCache)) __clsCache[name] = cls
   return __clsCache[name] as T
+}
+
+/** Cast typed component props to a plain record for dynamic key lookups. */
+export function rawProps(props: unknown): Record<string, unknown> {
+  return props as Record<string, unknown>
 }

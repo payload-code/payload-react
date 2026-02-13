@@ -10,6 +10,20 @@ A React library for integrating [Payload.js](https://docs.payload.com/#secure-in
 npm install payload-react
 ```
 
+## TypeScript support
+
+The package ships first-class TypeScript declarations from `dist/*.d.ts`.
+
+- Run `npm run typecheck` for repository-level type safety.
+- Run `npm run typecheck:consumer` to validate consumer usage against emitted declarations.
+- Run `npm run verify:pack` to confirm npm tarball contents before publish.
+
+### API notes
+
+- `clientToken` is required for `PaymentForm`, `PaymentMethodForm`, `Checkout`, and `ProcessingAccountForm`.
+- Checkout props are `clientToken`, `form`, `autoSubmit`, `amount`, and documented events (`onProcessed`, `onAuthorized`, `onDeclined`, `onSuccess`, `onLoaded`, `onClosed`).
+- The React wrapper does not currently expose imperative `form.plaid(button)` helpers as dedicated React exports (e.g. no `PlaidButton` component).
+
 ## Get Started
 
 Once you've installed the Payload.js React library to your environment,

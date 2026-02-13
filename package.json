@@ -16,6 +16,8 @@
     "eslint": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
     "typecheck": "tsc -p tsconfig.json",
+    "typecheck:consumer": "npm run build:types && tsc -p tests/consumer/tsconfig.json",
+    "verify:pack": "npm pack --dry-run --ignore-scripts",
     "tsc": "tsc -p tsconfig.json"
   },
   "keywords": [],

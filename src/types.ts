@@ -1,11 +1,10 @@
 import type * as React from 'react'
 
-export type PayloadEvent = {
-  target?: EventTarget | null
-} & Record<string, any>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type PayloadEvent = { target?: EventTarget | null } & Record<string, any>
 
-export type PayloadEventHandler<E = PayloadEvent> = (
-  evt: E,
+export type PayloadEventHandler = (
+  evt: PayloadEvent,
   ...args: unknown[]
 ) => void
 

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["react", "react-dom"],
+    "baseUrl": ".",
+    "paths": {
+      "payload-react": ["../../dist/payload-react.d.ts"]
+    }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"]
+}
+

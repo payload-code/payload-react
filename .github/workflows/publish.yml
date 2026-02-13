@@ -12,7 +12,11 @@ jobs:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
+      - run: npm run typecheck
+      - run: npm run typecheck:consumer
+      - run: npm t
       - run: npm run build
+      - run: npm run verify:pack
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
