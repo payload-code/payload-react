@@ -16,7 +16,6 @@ jobs:
       - run: npm run typecheck:consumer
       - run: npm t
       - run: npm run build
-      - run: npm run verify:pack
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

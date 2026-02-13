@@ -10,19 +10,9 @@ A React library for integrating [Payload.js](https://docs.payload.com/#secure-in
 npm install payload-react
 ```
 
-## TypeScript support
+## TypeScript
 
-The package ships first-class TypeScript declarations from `dist/*.d.ts`.
-
-- Run `npm run typecheck` for repository-level type safety.
-- Run `npm run typecheck:consumer` to validate consumer usage against emitted declarations.
-- Run `npm run verify:pack` to confirm npm tarball contents before publish.
-
-### API notes
-
-- `clientToken` is required for `PaymentForm`, `PaymentMethodForm`, `Checkout`, and `ProcessingAccountForm`.
-- Checkout props are `clientToken`, `form`, `autoSubmit`, `amount`, and documented events (`onProcessed`, `onAuthorized`, `onDeclined`, `onSuccess`, `onLoaded`, `onClosed`).
-- The React wrapper does not currently expose imperative `form.plaid(button)` helpers as dedicated React exports (e.g. no `PlaidButton` component).
+The package ships TypeScript declarations (`dist/*.d.ts`). Run `npm run typecheck` to check types locally.
 
 ## Get Started
 
@@ -31,19 +21,19 @@ import the `payload-react` components to get started.
 
 ```javascript
 import {
-    PaymentForm,
-    PaymentMethodForm,
-    PayloadInput,
-    CardNumber,
-    Expiry,
-    CardCode,
-    RoutingNumber,
-    AccountNumber,
-    ProcessingAccountForm,
-    Checkout,
-    openProcessingAccountForm,
-    openCheckout
-} from 'payload-react';
+  AccountNumber,
+  CardCode,
+  CardNumber,
+  Checkout,
+  Expiry,
+  PayloadInput,
+  PaymentForm,
+  PaymentMethodForm,
+  ProcessingAccountForm,
+  RoutingNumber,
+  openCheckout,
+  openProcessingAccountForm,
+} from 'payload-react'
 ```
 
 ### API Authentication
@@ -56,50 +46,59 @@ Below is an example of a react checkout form utilizing Payload.js Secure Inputs 
 with Bootstrap 4.
 
 ```javascript
-import React from 'react';
 import {
-    PaymentForm,
-    PayloadInput,
-    CardNumber,
-    Expiry,
-    CardCode
-} from 'payload-react';
+  CardCode,
+  CardNumber,
+  Expiry,
+  PayloadInput,
+  PaymentForm,
+} from 'payload-react'
+import React from 'react'
 
 function CheckoutForm() {
-    return <PaymentForm
-      clientToken='client_key_2zsp9Pske5l2Bgcy3bySES'
+  return (
+    <PaymentForm
+      clientToken="client_key_2zsp9Pske5l2Bgcy3bySES"
       className="container"
-      styles={{invalid: 'is-invalid'}}
-      onProcessed={(evt)=>{
+      styles={{ invalid: 'is-invalid' }}
+      onProcessed={(evt) => {
         console.log('processed', evt.transaction_id)
       }}
-      onError={(evt)=>{
+      onError={(evt) => {
         alert(evt.message)
-      }}
-    >
-        <PayloadInput attr="amount" type="hidden" value="10.00"/>
-        <div className="row pt-2">
-            <div className="form-group col-7 px-1">
-                <label>Card</label>
-                <CardNumber className="form-control" onInvalid={(evt)=>{
-                    alert(evt.message)
-                }}/>
-            </div>
-            <div className="form-group col-3 px-1">
-                <label>Expiration</label>
-                <Expiry className="form-control" onInvalid={(evt)=>{
-                    alert(evt.message)
-                }}/>
-            </div>
-            <div className="form-group col-2 px-1">
-                <label>CVC</label>
-                <CardCode className="form-control"/>
-            </div>
+      }}>
+      <PayloadInput attr="amount" type="hidden" value="10.00" />
+      <div className="row pt-2">
+        <div className="form-group col-7 px-1">
+          <label>Card</label>
+          <CardNumber
+            className="form-control"
+            onInvalid={(evt) => {
+              alert(evt.message)
+            }}
+          />
         </div>
-        <div className="row pt-2">
-            <button className="btn btn-primary" type="submit">Pay Now</button>
+        <div className="form-group col-3 px-1">
+          <label>Expiration</label>
+          <Expiry
+            className="form-control"
+            onInvalid={(evt) => {
+              alert(evt.message)
+            }}
+          />
         </div>
+        <div className="form-group col-2 px-1">
+          <label>CVC</label>
+          <CardCode className="form-control" />
+        </div>
+      </div>
+      <div className="row pt-2">
+        <button className="btn btn-primary" type="submit">
+          Pay Now
+        </button>
+      </div>
     </PaymentForm>
+  )
 }
 ```
 
@@ -108,23 +107,23 @@ function CheckoutForm() {
 Below is an example of how to open the Payload.js ProcessingAccountForm modal from react.
 
 ```javascript
-import {
-    openProcessingAccountForm
-} from 'payload-react';
+import { openProcessingAccountForm } from 'payload-react'
 
 function OnboardButton() {
-    return <button
-        className="btn btn-primary"
-        onClick={(e) =>
-          openProcessingAccountForm({
-            clientToken: 'client_key_2zsp9Pske5l2Bgcy3bySES',
-            onSuccess(evt) {
-                console.log(evt.account.id)
-            }
-          })
-        }>
-        Open Processing Account Form Modal
+  return (
+    <button
+      className="btn btn-primary"
+      onClick={(e) =>
+        openProcessingAccountForm({
+          clientToken: 'client_key_2zsp9Pske5l2Bgcy3bySES',
+          onSuccess(evt) {
+            console.log(evt.account.id)
+          },
+        })
+      }>
+      Open Processing Account Form Modal
     </button>
+  )
 }
 ```
 

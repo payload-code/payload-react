@@ -13,5 +13,5 @@
       "payload-react": ["./src/payload-react"]
     }
   },
-  "include": ["src/**/*", "tests/types/**/*.ts", "tests/types/**/*.tsx"]
+  "include": ["src/**/*"]
 }

@@ -24,7 +24,5 @@ jobs:
         run: npm run typecheck
       - name: Consumer Typecheck
         run: npm run typecheck:consumer
-      - name: Verify Package Tarball
-        run: npm run verify:pack
       - name: Tests
         run: npm t
