@@ -1,10 +1,5 @@
 declare module 'payload-react' {
-  import {
-    Component,
-    ForwardRefExoticComponent,
-    ReactNode,
-    RefAttributes,
-  } from 'react'
+  import { Component, ReactElement, ReactNode, RefAttributes } from 'react'
 
   type EventHandler = (event: any) => void
 
@@ -60,24 +55,28 @@ declare module 'payload-react' {
 
   // PaymentForm / PaymentMethodForm (same props as PayloadForm)
 
-  export const PaymentForm: ForwardRefExoticComponent<
-    PayloadFormProps & RefAttributes<any>
-  >
+  export const PaymentForm: {
+    (props: PayloadFormProps & RefAttributes<any>): ReactElement
+    displayName?: string
+    propTypes?: any
+  }
 
-  export const PaymentMethodForm: ForwardRefExoticComponent<
-    PayloadFormProps & RefAttributes<any>
-  >
+  export const PaymentMethodForm: {
+    (props: PayloadFormProps & RefAttributes<any>): ReactElement
+    displayName?: string
+    propTypes?: any
+  }
 
   // Convenience input components
 
   type InputComponentProps = Omit<PayloadInputProps, 'pl-input' | 'attr'>
 
-  export function Card(props: InputComponentProps): JSX.Element
-  export function CardNumber(props: InputComponentProps): JSX.Element
-  export function Expiry(props: InputComponentProps): JSX.Element
-  export function CardCode(props: InputComponentProps): JSX.Element
-  export function RoutingNumber(props: InputComponentProps): JSX.Element
-  export function AccountNumber(props: InputComponentProps): JSX.Element
+  export function Card(props: InputComponentProps): ReactElement
+  export function CardNumber(props: InputComponentProps): ReactElement
+  export function Expiry(props: InputComponentProps): ReactElement
+  export function CardCode(props: InputComponentProps): ReactElement
+  export function RoutingNumber(props: InputComponentProps): ReactElement
+  export function AccountNumber(props: InputComponentProps): ReactElement
 
   // ProcessingAccountForm
 
