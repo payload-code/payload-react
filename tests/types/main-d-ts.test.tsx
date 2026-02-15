@@ -1,11 +1,8 @@
 /**
- * Type test for main.d.ts — verifies the type declarations match
- * what the components actually accept.
- *
+ * Type test for main.d.ts — verifies the type declarations match what the components actually accept.
  * Run: tsc --noEmit --strict --jsx react-jsx -p tests/types/tsconfig.json
  *
- * Lines marked @ts-expect-error MUST fail compilation.
- * Everything else MUST pass.
+ * Lines marked @ts-expect-error MUST fail compilation. Everything else MUST pass.
  */
 import {
   AccountNumber,
@@ -23,9 +20,8 @@ import {
   openCheckout,
   openProcessingAccountForm,
 } from 'payload-react'
-// PayloadInput: valid usage
-import React from 'react'
 
+// PayloadInput: valid usage
 ;<PayloadInput attr="card_number" />
 ;<PayloadInput attr="amount" type="hidden" value="100" placeholder="test" />
 ;<PayloadInput disablePaste onInvalid={(e) => {}} onValid={(e) => {}} />

@@ -120,7 +120,7 @@ declare module 'payload-react' {
 
   export function openCheckout(props: CheckoutProps): Promise<any>
 
-  // Default export (deprecated)
+  // Default export — deprecated in favor of the named exports above (PayloadForm, PayloadInput, etc.)
 
   const PayloadReact: {
     input: Record<string, any>
