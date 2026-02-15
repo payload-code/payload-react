@@ -66,6 +66,9 @@
       "resources": "usable",
       "runScripts": "dangerously"
     },
+    "testPathIgnorePatterns": [
+      "/tests/types/"
+    ],
     "setupFiles": [
       "./tests/setup-tests.js"
     ],
