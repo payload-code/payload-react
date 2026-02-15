@@ -1,87 +1,125 @@
-declare module "utils" {
-    export function getPayload(): any;
-}
-declare module "payload-react" {
-    export class PayloadInput {
-        static contextType: any;
-        constructor(props: any);
-        props: any;
-        inputRef: any;
-        isSensitiveField(): any;
-        componentDidMount(): void;
-        componentWillUnmount(): void;
-        render(): JSX.Element;
-    }
-    export class PayloadForm {
-        constructor(props: any);
-        props: any;
-        state: {
-            Payload: any;
-            listeners: {};
-        };
-        formRef: any;
-        componentDidMount(): Promise<void>;
-        componentDidUpdate(prevProps: any, prevState: any, snapshot: any): void;
-        initalizePayload(): void;
-        pl_form: any;
-        addListener(evt: any, ref: any, cb: any): void;
-        removeListener(evt: any, ref: any): void;
-        render(): JSX.Element;
-    }
-    export namespace PayloadForm {
-        namespace propTypes {
-            let clientToken: any;
-            let Payload: any;
-        }
-    }
-    export function PaymentForm({ children, ...props }: {
-        [x: string]: any;
-        children: any;
-    }): JSX.Element;
-    export function PaymentMethodForm({ children, ...props }: {
-        [x: string]: any;
-        children: any;
-    }): JSX.Element;
-    export function Card(props: any): JSX.Element;
-    export function CardNumber(props: any): JSX.Element;
-    export function Expiry(props: any): JSX.Element;
-    export function CardCode(props: any): JSX.Element;
-    export function RoutingNumber(props: any): JSX.Element;
-    export function AccountNumber(props: any): JSX.Element;
-    export class ProcessingAccountForm {
-        constructor(props: any);
-        props: any;
-        state: {
-            Payload: any;
-        };
-        procFormRef: any;
-        processingAccount: any;
-        excludeProps: string[];
-        componentDidMount(): Promise<void>;
-        componentDidUpdate(prevProps: any, prevState: any, snapshot: any): void;
-        initalizePayload(): void;
-        render(): JSX.Element;
-    }
-    export function openProcessingAccountForm(props: any): Promise<any>;
-    export class Checkout {
-        constructor(props: any);
-        props: any;
-        state: {
-            Payload: any;
-        };
-        checkoutRef: any;
-        checkout: any;
-        excludeProps: string[];
-        componentDidMount(): Promise<void>;
-        componentDidUpdate(prevProps: any, prevState: any, snapshot: any): void;
-        initalizePayload(): void;
-        render(): JSX.Element;
-    }
-    export function openCheckout(props: any): Promise<any>;
-    export default PayloadReact;
-    namespace PayloadReact {
-        let input: {};
-        let select: {};
-        let form: {};
-    }
+declare module 'payload-react' {
+  import { Component, ReactNode, Ref } from 'react'
+
+  type EventHandler = (event: any) => void
+
+  // ── PayloadInput ──
+
+  interface PayloadInputProps {
+    attr?: string
+    'pl-input'?: string
+    disablePaste?: boolean
+    onInvalid?: EventHandler
+    onValid?: EventHandler
+    onFocus?: EventHandler
+    onBlur?: EventHandler
+    onChange?: EventHandler
+    type?: string
+    value?: string
+    placeholder?: string
+    className?: string
+    [key: string]: any // allow pass-through HTML attrs
+  }
+
+  export class PayloadInput extends Component<PayloadInputProps> {}
+
+  // ── PayloadForm ──
+
+  interface PayloadFormProps {
+    clientToken: string
+    Payload?: any
+    autoSubmit?: boolean
+    styles?: Record<string, any>
+    payment?: Record<string, any>
+    paymentMethod?: Record<string, any>
+    preventDefaultOnSubmit?: boolean
+    preventSubmitOnEnter?: boolean
+    onProcessing?: EventHandler
+    onProcessed?: EventHandler
+    onAuthorized?: EventHandler
+    onError?: EventHandler
+    onDeclined?: EventHandler
+    onCreated?: EventHandler
+    onSuccess?: EventHandler
+    onInvalid?: EventHandler
+    onValid?: EventHandler
+    onFocus?: EventHandler
+    onBlur?: EventHandler
+    onChange?: EventHandler
+    children?: ReactNode
+  }
+
+  export class PayloadForm extends Component<PayloadFormProps> {}
+
+  // ── PaymentForm / PaymentMethodForm (same props as PayloadForm) ──
+
+  export const PaymentForm: React.ForwardRefExoticComponent<
+    PayloadFormProps & React.RefAttributes<any>
+  >
+
+  export const PaymentMethodForm: React.ForwardRefExoticComponent<
+    PayloadFormProps & React.RefAttributes<any>
+  >
+
+  // ── Convenience input components ──
+
+  type InputComponentProps = Omit<PayloadInputProps, 'pl-input' | 'attr'>
+
+  export function Card(props: InputComponentProps): JSX.Element
+  export function CardNumber(props: InputComponentProps): JSX.Element
+  export function Expiry(props: InputComponentProps): JSX.Element
+  export function CardCode(props: InputComponentProps): JSX.Element
+  export function RoutingNumber(props: InputComponentProps): JSX.Element
+  export function AccountNumber(props: InputComponentProps): JSX.Element
+
+  // ── ProcessingAccountForm ──
+
+  interface ProcessingAccountFormProps {
+    clientToken: string
+    Payload?: any
+    form?: string
+    legalEntityId?: string
+    onSuccess?: EventHandler
+    onAccountCreated?: EventHandler
+    onLoaded?: EventHandler
+    onClosed?: EventHandler
+    children?: ReactNode
+  }
+
+  export class ProcessingAccountForm extends Component<ProcessingAccountFormProps> {}
+
+  export function openProcessingAccountForm(
+    props: ProcessingAccountFormProps
+  ): Promise<any>
+
+  // ── Checkout ──
+
+  interface CheckoutProps {
+    clientToken: string
+    Payload?: any
+    form?: string
+    autoSubmit?: boolean
+    amount?: string | number
+    onProcessed?: EventHandler
+    onAuthorized?: EventHandler
+    onDeclined?: EventHandler
+    onSuccess?: EventHandler
+    onLoaded?: EventHandler
+    onClosed?: EventHandler
+    children?: ReactNode
+  }
+
+  export class Checkout extends Component<CheckoutProps> {}
+
+  export function openCheckout(props: CheckoutProps): Promise<any>
+
+  // ── Default export (deprecated) ──
+
+  const PayloadReact: {
+    input: Record<string, any>
+    select: Record<string, any>
+    form: Record<string, any>
+  }
+
+  export default PayloadReact
 }

@@ -649,9 +649,70 @@ export const openCheckout = async (props) => {
   return checkout
 }
 
+// ── PropTypes ──
+
+const eventHandler = PropTypes.func
+
+PayloadInput.propTypes = {
+  attr: PropTypes.string,
+  'pl-input': PropTypes.string,
+  disablePaste: PropTypes.bool,
+  onInvalid: eventHandler,
+  onValid: eventHandler,
+  onFocus: eventHandler,
+  onBlur: eventHandler,
+  onChange: eventHandler,
+}
+
 PayloadForm.propTypes = {
   clientToken: PropTypes.string.isRequired,
   Payload: PropTypes.func,
+  autoSubmit: PropTypes.bool,
+  styles: PropTypes.object,
+  payment: PropTypes.object,
+  paymentMethod: PropTypes.object,
+  preventDefaultOnSubmit: PropTypes.bool,
+  preventSubmitOnEnter: PropTypes.bool,
+  onProcessing: eventHandler,
+  onProcessed: eventHandler,
+  onAuthorized: eventHandler,
+  onError: eventHandler,
+  onDeclined: eventHandler,
+  onCreated: eventHandler,
+  onSuccess: eventHandler,
+  onInvalid: eventHandler,
+  onValid: eventHandler,
+  onFocus: eventHandler,
+  onBlur: eventHandler,
+  onChange: eventHandler,
+}
+
+PaymentForm.propTypes = PayloadForm.propTypes
+PaymentMethodForm.propTypes = PayloadForm.propTypes
+
+ProcessingAccountForm.propTypes = {
+  clientToken: PropTypes.string.isRequired,
+  Payload: PropTypes.func,
+  form: PropTypes.string,
+  legalEntityId: PropTypes.string,
+  onSuccess: eventHandler,
+  onAccountCreated: eventHandler,
+  onLoaded: eventHandler,
+  onClosed: eventHandler,
+}
+
+Checkout.propTypes = {
+  clientToken: PropTypes.string.isRequired,
+  Payload: PropTypes.func,
+  form: PropTypes.string,
+  autoSubmit: PropTypes.bool,
+  amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onProcessed: eventHandler,
+  onAuthorized: eventHandler,
+  onDeclined: eventHandler,
+  onSuccess: eventHandler,
+  onLoaded: eventHandler,
+  onClosed: eventHandler,
 }
 
 /**
