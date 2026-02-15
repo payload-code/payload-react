@@ -1,9 +1,14 @@
 declare module 'payload-react' {
-  import { Component, ReactNode, Ref } from 'react'
+  import {
+    Component,
+    ForwardRefExoticComponent,
+    ReactNode,
+    RefAttributes,
+  } from 'react'
 
   type EventHandler = (event: any) => void
 
-  // ── PayloadInput ──
+  // PayloadInput
 
   interface PayloadInputProps {
     attr?: string
@@ -23,7 +28,7 @@ declare module 'payload-react' {
 
   export class PayloadInput extends Component<PayloadInputProps> {}
 
-  // ── PayloadForm ──
+  // PayloadForm
 
   interface PayloadFormProps {
     clientToken: string
@@ -49,19 +54,21 @@ declare module 'payload-react' {
     children?: ReactNode
   }
 
-  export class PayloadForm extends Component<PayloadFormProps> {}
+  export class PayloadForm extends Component<PayloadFormProps> {
+    submit(): Promise<any>
+  }
 
-  // ── PaymentForm / PaymentMethodForm (same props as PayloadForm) ──
+  // PaymentForm / PaymentMethodForm (same props as PayloadForm)
 
-  export const PaymentForm: React.ForwardRefExoticComponent<
-    PayloadFormProps & React.RefAttributes<any>
+  export const PaymentForm: ForwardRefExoticComponent<
+    PayloadFormProps & RefAttributes<any>
   >
 
-  export const PaymentMethodForm: React.ForwardRefExoticComponent<
-    PayloadFormProps & React.RefAttributes<any>
+  export const PaymentMethodForm: ForwardRefExoticComponent<
+    PayloadFormProps & RefAttributes<any>
   >
 
-  // ── Convenience input components ──
+  // Convenience input components
 
   type InputComponentProps = Omit<PayloadInputProps, 'pl-input' | 'attr'>
 
@@ -72,7 +79,7 @@ declare module 'payload-react' {
   export function RoutingNumber(props: InputComponentProps): JSX.Element
   export function AccountNumber(props: InputComponentProps): JSX.Element
 
-  // ── ProcessingAccountForm ──
+  // ProcessingAccountForm
 
   interface ProcessingAccountFormProps {
     clientToken: string
@@ -92,7 +99,7 @@ declare module 'payload-react' {
     props: ProcessingAccountFormProps
   ): Promise<any>
 
-  // ── Checkout ──
+  // Checkout
 
   interface CheckoutProps {
     clientToken: string
@@ -113,7 +120,7 @@ declare module 'payload-react' {
 
   export function openCheckout(props: CheckoutProps): Promise<any>
 
-  // ── Default export (deprecated) ──
+  // Default export (deprecated)
 
   const PayloadReact: {
     input: Record<string, any>

@@ -79,7 +79,8 @@
     ]
   },
   "files": [
-    "dist"
+    "dist",
+    "main.d.ts"
   ],
   "browserslist": [
     ">0.2%",

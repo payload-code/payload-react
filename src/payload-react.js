@@ -649,7 +649,7 @@ export const openCheckout = async (props) => {
   return checkout
 }
 
-// ── PropTypes ──
+// PropTypes
 
 const eventHandler = PropTypes.func
 

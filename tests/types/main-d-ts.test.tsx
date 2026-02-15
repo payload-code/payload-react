@@ -22,7 +22,8 @@ import {
   RoutingNumber,
   openCheckout,
   openProcessingAccountForm,
-} from 'payload-react' // ── PayloadInput: valid usage ──
+} from 'payload-react'
+// PayloadInput: valid usage
 import React from 'react'
 
 ;<PayloadInput attr="card_number" />
@@ -30,7 +31,7 @@ import React from 'react'
 ;<PayloadInput disablePaste onInvalid={(e) => {}} onValid={(e) => {}} />
 ;<PayloadInput onFocus={(e) => {}} onBlur={(e) => {}} onChange={(e) => {}} />
 
-// ── PayloadForm: valid usage ──
+// PayloadForm: valid usage
 ;<PayloadForm clientToken="tok_123">
   <PayloadInput attr="amount" />
 </PayloadForm>
@@ -56,7 +57,7 @@ import React from 'react'
   onChange={(e) => {}}
 />
 
-// ── PayloadForm: invalid usage ──
+// PayloadForm: invalid usage
 
 // @ts-expect-error — clientToken is required
 ;<PayloadForm />
@@ -67,7 +68,7 @@ import React from 'react'
 // @ts-expect-error — onSuccess must be a function
 ;<PayloadForm clientToken="tok" onSuccess={12345} />
 
-// ── PaymentForm / PaymentMethodForm: same props as PayloadForm ──
+// PaymentForm / PaymentMethodForm: same props as PayloadForm
 ;<PaymentForm clientToken="tok_123" onSuccess={(e) => {}}>
   <CardNumber />
 </PaymentForm>
@@ -76,10 +77,10 @@ import React from 'react'
 // @ts-expect-error — clientToken is required
 ;<PaymentForm />
 
-// @ts-expect-error — hallucinated prop
+// @ts-expect-error — unknown prop
 ;<PaymentForm clientToken="tok" onFake={(e) => {}} />
 
-// ── Convenience input components ──
+// Convenience input components
 ;<Card />
 ;<CardNumber />
 ;<Expiry />
@@ -88,7 +89,7 @@ import React from 'react'
 ;<AccountNumber />
 ;<CardNumber onInvalid={(e: any) => {}} onValid={(e: any) => {}} />
 
-// ── ProcessingAccountForm: valid usage ──
+// ProcessingAccountForm: valid usage
 ;<ProcessingAccountForm clientToken="tok_123" />
 ;<ProcessingAccountForm
   clientToken="tok_123"
@@ -103,10 +104,10 @@ import React from 'react'
 // @ts-expect-error — clientToken is required
 ;<ProcessingAccountForm />
 
-// @ts-expect-error — hallucinated prop
+// @ts-expect-error — unknown prop
 ;<ProcessingAccountForm clientToken="tok" onFake={(e: any) => {}} />
 
-// ── Checkout: valid usage ──
+// Checkout: valid usage
 ;<Checkout clientToken="tok_123" />
 ;<Checkout
   clientToken="tok_123"
@@ -124,9 +125,9 @@ import React from 'react'
 // @ts-expect-error — clientToken is required
 ;<Checkout />
 
-// @ts-expect-error — hallucinated prop
+// @ts-expect-error — unknown prop
 ;<Checkout clientToken="tok" onFake={(e: any) => {}} />
 
-// ── openProcessingAccountForm / openCheckout ──
+// openProcessingAccountForm / openCheckout
 openProcessingAccountForm({ clientToken: 'tok_123' })
 openCheckout({ clientToken: 'tok_123', amount: 100 })
