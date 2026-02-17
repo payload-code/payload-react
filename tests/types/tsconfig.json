@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "jsx": "react-jsx",
+    "lib": ["ES2020", "DOM"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "types": ["react", "react-dom"],
+    "baseUrl": "../..",
+    "paths": {
+      "payload-react": ["./main.d.ts"]
+    }
+  },
+  "include": ["./*.tsx"]
+}

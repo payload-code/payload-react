@@ -20,5 +20,7 @@ jobs:
         run: npx eslint src --ext .js
       - name: Prettier
         run: npx prettier -c 'src/**/*.js'
+      - name: Type check
+        run: npm run test:types
       - name: Tests
         run: npm t
