@@ -1,7 +1,87 @@
 declare module 'payload-react' {
   import { Component, ReactElement, ReactNode, RefAttributes } from 'react'
 
-  type EventHandler = (event: any) => void
+  export interface PayloadFormSuccessEvent {
+    type: 'success'
+    transaction_id?: string
+    payment_method_id?: string
+    account?: { id: string }
+  }
+  export interface PayloadFormProcessedEvent {
+    type: 'processed'
+    transaction_id: string
+  }
+  export interface PayloadFormAuthorizedEvent {
+    type: 'authorized'
+    transaction_id: string
+  }
+  export interface PayloadFormDeclinedEvent {
+    type: 'declined'
+    transaction_id?: string
+    message?: string
+    error_type?: string
+    error_description?: string
+    status_code?: string
+  }
+  export interface PayloadCheckoutDeclinedEvent {
+    type: 'declined'
+    transaction_id?: string
+    message?: string
+    payments_attempted?: number
+  }
+  export interface PayloadErrorEvent {
+    type: 'error'
+    message?: string
+    error_type?: string
+    error_description?: string
+  }
+  export interface PayloadFormCreatedEvent {
+    type: 'created'
+    payment_method_id: string
+  }
+  export interface PayloadFormUpdatedEvent {
+    type: 'updated'
+    payment_method_id?: string
+  }
+  export interface PayloadAccountCreatedEvent {
+    type: 'account_created'
+    account: { id: string }
+  }
+  export interface PayloadInvalidEvent {
+    type: 'invalid'
+    message?: string
+    invalid?: Record<string, string>
+    live?: boolean
+    target?: HTMLElement
+  }
+  export interface PayloadValidEvent {
+    type: 'valid'
+    live?: boolean
+    target?: HTMLElement
+  }
+  export interface PayloadChangeEvent {
+    type: 'change'
+    value?: string
+    form_id?: string
+    target?: HTMLElement
+  }
+  export interface PayloadFocusEvent {
+    type: 'focus'
+    target?: HTMLElement
+  }
+  export interface PayloadBlurEvent {
+    type: 'blur'
+    target?: HTMLElement
+  }
+  export interface PayloadLoadedEvent {
+    type: 'loaded'
+  }
+  export interface PayloadClosedEvent {
+    type: 'closed'
+  }
+  export interface PayloadProcessingEvent {
+    type: 'processing'
+  }
 
   // PayloadInput
 
@@ -9,11 +89,11 @@ declare module 'payload-react' {
     attr?: string
     'pl-input'?: string
     disablePaste?: boolean
-    onInvalid?: EventHandler
-    onValid?: EventHandler
-    onFocus?: EventHandler
-    onBlur?: EventHandler
-    onChange?: EventHandler
+    onInvalid?: (evt: PayloadInvalidEvent) => void
+    onValid?: (evt: PayloadValidEvent) => void
+    onFocus?: (evt: PayloadFocusEvent) => void
+    onBlur?: (evt: PayloadBlurEvent) => void
+    onChange?: (evt: PayloadChangeEvent) => void
     type?: string
     value?: string
     placeholder?: string
@@ -34,18 +114,18 @@ declare module 'payload-react' {
     paymentMethod?: Record<string, any>
     preventDefaultOnSubmit?: boolean
     preventSubmitOnEnter?: boolean
-    onProcessing?: EventHandler
-    onProcessed?: EventHandler
-    onAuthorized?: EventHandler
-    onError?: EventHandler
-    onDeclined?: EventHandler
-    onCreated?: EventHandler
-    onSuccess?: EventHandler
-    onInvalid?: EventHandler
-    onValid?: EventHandler
-    onFocus?: EventHandler
-    onBlur?: EventHandler
-    onChange?: EventHandler
+    onProcessing?: (evt: PayloadProcessingEvent) => void
+    onProcessed?: (evt: PayloadFormProcessedEvent) => void
+    onAuthorized?: (evt: PayloadFormAuthorizedEvent) => void
+    onError?: (evt: PayloadErrorEvent) => void
+    onDeclined?: (evt: PayloadFormDeclinedEvent) => void
+    onCreated?: (evt: PayloadFormCreatedEvent) => void
+    onSuccess?: (evt: PayloadFormSuccessEvent) => void
+    onInvalid?: (evt: PayloadInvalidEvent) => void
+    onValid?: (evt: PayloadValidEvent) => void
+    onFocus?: (evt: PayloadFocusEvent) => void
+    onBlur?: (evt: PayloadBlurEvent) => void
+    onChange?: (evt: PayloadChangeEvent) => void
     children?: ReactNode
   }
 
@@ -85,10 +165,10 @@ declare module 'payload-react' {
     Payload?: any
     form?: string
     legalEntityId?: string
-    onSuccess?: EventHandler
-    onAccountCreated?: EventHandler
-    onLoaded?: EventHandler
-    onClosed?: EventHandler
+    onSuccess?: (evt: PayloadFormSuccessEvent) => void
+    onAccountCreated?: (evt: PayloadAccountCreatedEvent) => void
+    onLoaded?: (evt: PayloadLoadedEvent) => void
+    onClosed?: (evt: PayloadClosedEvent) => void
     children?: ReactNode
   }
 
@@ -106,12 +186,12 @@ declare module 'payload-react' {
     form?: string
     autoSubmit?: boolean
     amount?: string | number
-    onProcessed?: EventHandler
-    onAuthorized?: EventHandler
-    onDeclined?: EventHandler
-    onSuccess?: EventHandler
-    onLoaded?: EventHandler
-    onClosed?: EventHandler
+    onProcessed?: (evt: PayloadFormProcessedEvent) => void
+    onAuthorized?: (evt: PayloadFormAuthorizedEvent) => void
+    onDeclined?: (evt: PayloadCheckoutDeclinedEvent) => void
+    onSuccess?: (evt: PayloadFormSuccessEvent) => void
+    onLoaded?: (evt: PayloadLoadedEvent) => void
+    onClosed?: (evt: PayloadClosedEvent) => void
     children?: ReactNode
   }
 
