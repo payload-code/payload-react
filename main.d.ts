@@ -53,15 +53,11 @@ declare module 'payload-react' {
     invalid?: Record<string, string>
     live?: boolean
     target?: HTMLElement
-    /** Field name or identifier for the invalid input */
-    field?: string
   }
   export interface PayloadValidEvent {
     type: 'valid'
     live?: boolean
     target?: HTMLElement
-    /** Field name or identifier for the valid input */
-    field?: string
   }
   export interface PayloadChangeEvent {
     type: 'change'
