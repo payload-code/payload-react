@@ -21,7 +21,6 @@ import {
   openProcessingAccountForm,
 } from 'payload-react'
 
-// PayloadInput: valid usage
 ;<PayloadInput attr="card_number" />
 ;<PayloadInput attr="amount" type="hidden" value="100" placeholder="test" />
 ;<PayloadInput disablePaste onInvalid={(e) => {}} onValid={(e) => {}} />
@@ -63,6 +62,13 @@ import {
 
 // @ts-expect-error — onSuccess must be a function
 ;<PayloadForm clientToken="tok" onSuccess={12345} />
+;<PayloadForm
+  clientToken="tok"
+  onSuccess={(evt) => {
+    // @ts-expect-error — success event has transaction_id, not transaction.id
+    evt.transaction.id
+  }}
+/>
 
 // PaymentForm / PaymentMethodForm: same props as PayloadForm
 ;<PaymentForm clientToken="tok_123" onSuccess={(e) => {}}>
